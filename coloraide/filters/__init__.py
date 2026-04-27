@@ -30,22 +30,4 @@ def filters(
     **kwargs: Any
 ) -> AnyColor:
     """Filter."""
-
-    f = color.FILTER_MAP.get(name)
-    if not f:
-        raise ValueError(f"'{name}' filter is not supported")
-
-    if space is None:
-        space = f.DEFAULT_SPACE
-
-    if space not in f.ALLOWED_SPACES:
-        raise ValueError(
-            f"The '{name}' only supports filtering in the {f.ALLOWED_SPACES!s} spaces, not '{space}'"
-        )
-
-    if out_space is None:
-        out_space = space
-
-    c = color.convert(space, in_place=in_place, norm=False).normalize()
-    f.filter(c, amount, **kwargs)
-    return c.convert(out_space, in_place=True)
+    pass

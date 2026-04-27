@@ -36,13 +36,7 @@ class Environment:
         scale: float
     ):
         """Initialize environmental data."""
-
-        self.a = 0.17883277
-        self.b = 0.28466892  # `1 - 4 * a`
-        self.c = 0.55991073  # `0.5 - a * math.log(4 * a)`
-        self.beta = hlg_black_level_lift(lw, lb)
-        self.scale = scale
-        self.inv_scale = 1 / scale
+        pass
 
 
 def hlg_gamma(lw: float = 1000.0) -> float:
@@ -51,8 +45,7 @@ def hlg_gamma(lw: float = 1000.0) -> float:
 
     Ranges should be `lw >= 1000 cd / m^2`.
     """
-
-    return 1.2 + 0.42 * math.log(lw / 1000.0)
+    pass
 
 
 def hlg_black_level_lift(lw: float = 0.0, lb: float = 1000.0) -> float:
@@ -61,28 +54,17 @@ def hlg_black_level_lift(lw: float = 0.0, lb: float = 1000.0) -> float:
 
     Ranges should be `lw >= 1000 cd / m^2` and `lb <= 0.005 cd / m^2`.
     """
-
-    return math.sqrt(3 * (lb / lw) ** (1 / hlg_gamma(lw)))
+    pass
 
 
 def oetf_hlg(values: Vector, env: Environment) -> Vector:
     """HLG OETF."""
-
-    adjusted = []  # type: Vector
-    for v in values:
-        v = alg.nth_root(3 * v, 2) if v <= 1 / 12 else env.a * math.log(12 * v - env.b) + env.c
-        adjusted.append((v - env.beta) / (1 - env.beta))
-    return adjusted
+    pass
 
 
 def inverse_oetf_hlg(values: Vector, env: Environment) -> Vector:
     """HLG inverse OETF."""
-
-    adjusted = []  # type: Vector
-    for v in values:
-        v = (1 - env.beta) * v + env.beta
-        adjusted.append((v ** 2 / 3) if v <= 0.5 else (math.exp((v - env.c) / env.a) + env.b) / 12)
-    return adjusted
+    pass
 
 
 class Rec2100HLG(sRGBLinear):
@@ -101,15 +83,12 @@ class Rec2100HLG(sRGBLinear):
 
     def linear(self) -> str:
         """Return linear version of the RGB (if available)."""
-
-        return self.BASE
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To base from Rec 2100 HLG."""
-
-        return [c * self.ENV.inv_scale for c in inverse_oetf_hlg(coords, self.ENV)]
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From base to Rec. 2100 HLG."""
-
-        return oetf_hlg([c * self.ENV.scale for c in coords], self.ENV)
+        pass

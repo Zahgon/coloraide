@@ -38,13 +38,4 @@ def temp_to_xy_planckian_locus(
 
     https://en.wikipedia.org/wiki/Planckian_locus#The_Planckian_locus_in_the_XYZ_color_space
     """
-    x = y = z = 0.0
-
-    for wavelength in range(start, end + 1, step):
-        m = c1 * (wavelength ** -5) * math.expm1((c2 * 1e9) / (wavelength * temp)) ** -1
-        cmf = cmfs[wavelength]
-        x += m * cmf[0]
-        y += m * cmf[1]
-        z += m * cmf[2]
-
-    return util.xyz_to_xyY([x, y, z], white)[:-1]
+    pass

@@ -38,72 +38,27 @@ from ..types import Vector
 
 def length_of_ray_until_intersect(theta: float, line: dict[str, float]) -> float:
     """Length of ray until intersect."""
-
-    return line['intercept'] / (math.sin(theta) - line['slope'] * math.cos(theta))
+    pass
 
 
 def get_bounds(l: float) -> list[dict[str, float]]:
     """Get bounds."""
-
-    result = []
-    sub1 = ((l + 16) ** 3) / 1560896
-    sub2 = sub1 if sub1 > EPSILON else l / KAPPA
-
-    g = 0
-    while g < 3:
-        c = g
-        g += 1
-        m1, m2, m3 = XYZ_TO_RGB[c]
-        g1 = 0
-        while g1 < 2:
-            t = g1
-            g1 += 1
-            top1 = (284517 * m1 - 94839 * m3) * sub2
-            top2 = (838422 * m3 + 769860 * m2 + 731718 * m1) * l * sub2 - (769860 * t) * l
-            bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t
-            result.append({'slope': top1 / bottom, 'intercept': top2 / bottom})
-    return result
+    pass
 
 
 def max_chroma_for_lh(l: float, h: float) -> float:
     """Get max from for l * h."""
-
-    hrad = math.radians(h)
-    lengths = [length_of_ray_until_intersect(hrad, bound) for bound in get_bounds(l)]
-    return min(length for length in lengths if length >= 0)
+    pass
 
 
 def hsluv_to_luv(hsluv: Vector) -> Vector:
     """Convert HSLuv to LCh."""
-
-    h, s, l = hsluv
-    c = 0.0
-    if l > 100 - 1e-7:
-        l = 100.0
-    elif l < 1e-08:
-        l = 0.0
-    else:
-        _hx_max = max_chroma_for_lh(l, h)
-        c = _hx_max * 0.01 * s
-
-    a, b = alg.polar_to_rect(c, h)
-    return [l, a, b]
+    pass
 
 
 def luv_to_hsluv(luv: Vector) -> Vector:
     """Convert LCh to HSLuv."""
-
-    l = luv[0]
-    c, h = alg.rect_to_polar(luv[1], luv[2])
-    s = 0.0
-    if l > 100 - 1e-7:
-        l = 100.0
-    elif l < 1e-08:
-        l = 0.0
-    else:
-        _hx_max = max_chroma_for_lh(l, h)
-        s = c / _hx_max * 100.0
-    return [util.constrain_hue(h), s, l]
+    pass
 
 
 class HSLuv(HSL):
@@ -128,23 +83,16 @@ class HSLuv(HSL):
 
     def normalize(self, coords: Vector) -> Vector:
         """Normalize coordinates."""
-
-        if coords[1] < 0:
-            return self.from_base(self.to_base(coords))
-        coords[0] %= 360.0
-        return coords
+        pass
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Check if color is achromatic."""
-
-        return abs(coords[1]) < self.achromatic_threshold or coords[2] > (100 - 1e-7) or coords[2] < 1e-08
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To LChuv from HSLuv."""
-
-        return hsluv_to_luv(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From LChuv to HSLuv."""
-
-        return luv_to_hsluv(coords)
+        pass

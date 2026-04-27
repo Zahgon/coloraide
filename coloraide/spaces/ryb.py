@@ -28,14 +28,12 @@ GOSSET_CHEN_CUBE = [
 
 def cubic_poly(t: float, a: float, b: float, c: float, d: float) -> float:
     """Cubic polynomial."""
-
-    return a * t ** 3 + b * t ** 2 + c * t + d
+    pass
 
 
 def cubic_poly_dt(t: float, a: float, b: float, c: float) -> float:
     """Derivative of cubic polynomial."""
-
-    return 3 * a * t ** 2 + 2 * b * t + c
+    pass
 
 
 def solve_cubic_poly(a: float, b: float, c: float, d: float) -> float:
@@ -53,43 +51,17 @@ def solve_cubic_poly(a: float, b: float, c: float, d: float) -> float:
     of 1e-6 actually helps us maintain a minimum of 1e-6 accuracy through the sRGB
     gamut giving more consistent results within the trilinear cube.
     """
-
-    eps = 1e-6
-    maxiter = 8
-
-    if d <= 0.0 or d >= 1.0:
-        return d
-
-    # Try Newtons method to see if we can find a suitable value
-    f0 = lambda t: cubic_poly(t, a, b, c, -d)
-    dx = lambda t: cubic_poly_dt(t, a, b, c)
-    t, converged = alg.solve_newton(0.5, f0, dx, maxiter=maxiter, atol=eps)
-
-    # We converged or we are close enough
-    if converged:
-        return t
-
-    # Fallback to bisection
-    return alg.solve_bisect(0.0, 1.0, f0, start=d, atol=eps)[0]
+    pass
 
 
 def srgb_to_ryb(rgb: Vector, cube_t: Matrix, cube: Matrix, biased: bool) -> Vector:
     """Convert RYB to sRGB."""
-
-    # Calculate the RYB value
-    ryb = alg.ilerp3d(cube_t, rgb, vertices_t=cube, tol=1e-14)
-    # Remove smoothstep easing if "biased" is enabled.
-    return [solve_cubic_poly(-2.0, 3.0, 0.0, t) if 0 <= t <= 1 else t for t in ryb] if biased else ryb
+    pass
 
 
 def ryb_to_srgb(ryb: Vector, cube_t: Matrix, biased: bool) -> Vector:
     """Convert RYB to sRGB."""
-
-    # Apply cubic easing function
-    if biased:
-        ryb = [cubic_poly(t, -2.0, 3.0, 0.0, 0.0) if 0 <= t <= 1 else t for t in ryb]
-    # Bias interpolation towards corners if "biased" enable. Bias is a smoothstep easing function.
-    return alg.lerp3d(cube_t, ryb)
+    pass
 
 
 class RYB(Prism, Space):
@@ -114,7 +86,10 @@ class RYB(Prism, Space):
     }
     WHITE = WHITES['2deg']['D65']
     RYB_CUBE = GOSSET_CHEN_CUBE
-    RYB_CUBE_T = alg.transpose(RYB_CUBE)
+    try:
+        RYB_CUBE_T = alg.transpose(RYB_CUBE)
+    except (NotImplementedError, TypeError, AttributeError):
+        RYB_CUBE_T = None  # type: ignore[assignment]
     BIASED = False
     SUBTRACTIVE = True
 
@@ -125,22 +100,15 @@ class RYB(Prism, Space):
         Achromatic colors in the traditional sense is just brown in RYB,
         so convert to RGB where it is easier to determine an actual achromatic color.
         """
-
-        coords = self.to_base(coords)
-        for x in alg.vcross(coords, [1, 1, 1]):
-            if not math.isclose(0.0, x, abs_tol=util.ACHROMATIC_THRESHOLD):
-                return False
-        return True
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To sRGB."""
-
-        return ryb_to_srgb(coords, self.RYB_CUBE_T, self.BIASED)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From sRGB."""
-
-        return srgb_to_ryb(coords, self.RYB_CUBE_T, self.RYB_CUBE, self.BIASED)
+        pass
 
 
 class RYBBiased(RYB):

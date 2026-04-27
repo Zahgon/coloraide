@@ -15,20 +15,12 @@ import math
 
 def srgb_to_cmyk(cmy: Vector) -> Vector:
     """Convert sRGB to CMYK."""
-
-    k = min(cmy)
-    if k == 1:
-        return [0.0, 0.0, 0.0, k]
-    cmyk = [(v - k) / (1.0 - k) for v in cmy]
-    cmyk.append(k)
-    return cmyk
+    pass
 
 
 def cmyk_to_srgb(cmyk: Vector) -> Vector:
     """Convert CMYK to sRGB."""
-
-    k = cmyk[-1]
-    return [v * (1.0 - k) + k for v in cmyk[:-1]]
+    pass
 
 
 class CMYK(Space):
@@ -56,22 +48,12 @@ class CMYK(Space):
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Test if color is achromatic."""
-
-        if math.isclose(1.0, coords[-1], abs_tol=util.ACHROMATIC_THRESHOLD_SM):
-            return True
-
-        black = [1, 1, 1]
-        for x in alg.vcross(coords[:-1], black):
-            if not math.isclose(0.0, x, abs_tol=util.ACHROMATIC_THRESHOLD_SM):
-                return False
-        return True
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To sRGB."""
-
-        return cmyk_to_srgb(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From sRGB."""
-
-        return srgb_to_cmyk(coords)
+        pass

@@ -14,8 +14,7 @@ class DEHyAB(DeltaE):
 
     def __init__(self, space: str = "lab-d65") -> None:
         """Initialize."""
-
-        self.space = space
+        pass
 
     def distance(self, color: AnyColor, sample: AnyColor, space: str | None = None, **kwargs: Any) -> float:
         """
@@ -23,18 +22,4 @@ class DEHyAB(DeltaE):
 
         http://markfairchild.org/PDFs/PAP40.pdf.
         """
-
-        if space is None:
-            space = self.space
-
-        color = color.convert(space)
-        sample = sample.convert(space)
-
-        if not isinstance(color._space, Labish):
-            raise ValueError(f"The space '{space}' is not a 'lab-ish' color space and cannot use HyAB")
-
-        names = color._space.names()
-        l1, a1, b1 = color.get(names, nans=False)
-        l2, a2, b2 = sample.get(names, nans=False)
-
-        return abs(l1 - l2) + math.sqrt((a1 - a2) ** 2 + (b1 - b2) ** 2)
+        pass

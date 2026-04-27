@@ -17,12 +17,4 @@ class ColorContrast(Plugin, metaclass=ABCMeta):
 
 def contrast(name: str | None, color1: AnyColor, color2: AnyColor, **kwargs: Any) -> float:
     """Get the appropriate contrast plugin."""
-
-    if name is None:
-        name = color1.CONTRAST
-
-    method = color1.CONTRAST_MAP.get(name)
-    if not method:
-        raise ValueError(f"'{name}' contrast method is not supported")
-
-    return method.contrast(color1, color2, **kwargs)
+    pass

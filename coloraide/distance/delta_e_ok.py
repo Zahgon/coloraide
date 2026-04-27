@@ -12,8 +12,7 @@ class DEOK(DeltaE):
 
     def __init__(self, scalar: float = 1) -> None:
         """Initialize."""
-
-        self.scalar = scalar
+        pass
 
     def distance(self, color: AnyColor, sample: AnyColor, scalar: float | None = None, **kwargs: Any) -> float:
         """
@@ -21,8 +20,4 @@ class DEOK(DeltaE):
 
         This just uses simple Euclidean distance in the Oklab color space.
         """
-
-        if scalar is None:
-            scalar = self.scalar
-
-        return scalar * distance_euclidean(color, sample, space='oklab')
+        pass

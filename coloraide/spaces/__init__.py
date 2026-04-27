@@ -18,12 +18,7 @@ __deprecated__ = {
 
 def __getattr__(name: str) -> Any:  # pragma: no cover
     """Warn for deprecated attributes."""
-
-    deprecated = __deprecated__.get(name)
-    if deprecated:
-        deprecate.warn_deprecated(f"'{name}' is deprecated. Use '{deprecated}' instead.", stacklevel=3)
-        return globals()[deprecated]
-    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+    pass
 
 
 class Prism:
@@ -51,13 +46,11 @@ class Cylindrical:
 
     def hue_index(self) -> int:  # pragma: no cover
         """Get hue index."""
-
-        return self.get_channel_index(self.hue_name())
+        pass
 
     def radial_index(self) -> int:  # pragma: no cover
         """Get radial index."""
-
-        return self.get_channel_index(self.radial_name())
+        pass
 
 
 class Luminant:
@@ -72,8 +65,7 @@ class Luminant:
 
     def lightness_index(self) -> int:
         """Get lightness index."""
-
-        return self.get_channel_index(self.lightness_name())
+        pass
 
 
 class HSLish(Luminant, Cylindrical):
@@ -114,9 +106,7 @@ class SpaceMeta(ABCMeta):
 
     def __init__(cls, name: str, bases: tuple[object, ...], clsdict: dict[str, Any]) -> None:
         """Copy mappings on subclass."""
-
-        if len(cls.mro()) > 2:
-            cls.CHANNEL_ALIASES = cls.CHANNEL_ALIASES.copy()  # type: dict[str, str]
+        pass
 
 
 class Space(Plugin, metaclass=SpaceMeta):
@@ -157,27 +147,19 @@ class Space(Plugin, metaclass=SpaceMeta):
 
     def __init__(self, **kwargs: Any) -> None:
         """Initialize."""
-
-        self.channels = (*self.CHANNELS, alpha_channel)
-        self._chan_index = {c: e for e, c in enumerate(self.channels)}  # type: dict[str, int]
-        self._color_ids = (self.NAME,) if not self.SERIALIZE else self.SERIALIZE
-        self._percents = ([True] * (len(self.channels) - 1)) + [False]
-        self._polar = isinstance(self, Cylindrical)
+        pass
 
     def names(self) -> tuple[Channel, ...]:
         """Returns component names in a logical order specific to their color space type."""
-
-        return self.channels[:-1]
+        pass
 
     def indexes(self) -> list[int]:
         """Returns component indexes in a logical order specific to their color space type."""
-
-        return [self.get_channel_index(name) for name in self.names()]
+        pass
 
     def is_polar(self) -> bool:
         """Return if the space is polar."""
-
-        return self._polar
+        pass
 
     def linear(self) -> str:
         """Will return the name of the space which is the linear version of itself (if available)."""
@@ -186,20 +168,15 @@ class Space(Plugin, metaclass=SpaceMeta):
 
     def get_channel_index(self, name: str) -> int:
         """Get channel index."""
-
-        idx = self._chan_index.get(self.CHANNEL_ALIASES.get(name, name))
-        return int(name) if idx is None else idx
+        pass
 
     def resolve_channel(self, index: int, coords: Vector) -> float:
         """Resolve channels."""
-
-        value = coords[index]
-        return self.channels[index].nans if math.isnan(value) else value
+        pass
 
     def _serialize(self) -> tuple[str, ...]:
         """Get the serialized name."""
-
-        return self._color_ids
+        pass
 
     def normalize(self, coords: Vector) -> Vector:
         """
@@ -210,8 +187,7 @@ class Space(Plugin, metaclass=SpaceMeta):
         often have a valid, positive chroma/saturation and hue configuration that
         matches the same color.
         """
-
-        return coords
+        pass
 
     def is_achromatic(self, coords: Vector) -> bool | None:  # pragma: no cover
         """Check if color is achromatic."""
@@ -221,8 +197,7 @@ class Space(Plugin, metaclass=SpaceMeta):
     @classmethod
     def white(cls) -> VectorLike:
         """Get the white color for this color space."""
-
-        return cls.WHITE
+        pass
 
     @abstractmethod
     def to_base(self, coords: Vector) -> Vector:  # pragma: no cover
@@ -246,18 +221,7 @@ class Space(Plugin, metaclass=SpaceMeta):
         **kwargs: Any
     ) -> str:
         """Convert to CSS 'color' string: `color(space coords+ / alpha)`."""
-
-        return serialize.serialize_css(
-            parent,
-            color=True,
-            alpha=alpha,
-            precision=precision,
-            rounding=rounding,
-            fit=fit,
-            none=none,
-            percent=percent,
-            angle=angle
-        )
+        pass
 
     def match(
         self,

@@ -24,10 +24,8 @@ class Oklrab(Oklab):
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ."""
-
-        return [toe_inv(coords[0]), coords[1], coords[2]]
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ."""
-
-        return [toe(coords[0]), coords[1], coords[2]]
+        pass

@@ -29,27 +29,7 @@ class HSL(base.HSL):
         **kwargs: Any
     ) -> str:
         """Convert to CSS."""
-
-        if comma:
-            if isinstance(percent, bool):
-                percent = True
-            else:
-                percent = [False, True, True, *percent[3:4]]
-
-        return serialize.serialize_css(
-            parent,
-            func='hsl',
-            alpha=alpha,
-            precision=precision,
-            rounding=rounding,
-            fit=fit,
-            none=none,
-            color=color,
-            legacy=comma,
-            percent=percent,
-            scale=100,
-            angle=angle
-        )
+        pass
 
     def match(
         self,
@@ -58,5 +38,4 @@ class HSL(base.HSL):
         fullmatch: bool = True
     ) -> tuple[tuple[Vector, float], int] | None:
         """Match a CSS color string."""
-
-        return parse.parse_css(self, string, start, fullmatch)
+        pass

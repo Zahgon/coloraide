@@ -16,5 +16,4 @@ class DE99o(DeltaE):
 
     def distance(self, color: AnyColor, sample: AnyColor, **kwargs: Any) -> float:
         """Get delta E 99o."""
-
-        return distance_euclidean(color, sample, space='din99o')
+        pass

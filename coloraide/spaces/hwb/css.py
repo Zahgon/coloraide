@@ -28,20 +28,7 @@ class HWB(base.HWB):
         **kwargs: Any
     ) -> str:
         """Convert to CSS."""
-
-        return serialize.serialize_css(
-            parent,
-            func='hwb',
-            alpha=alpha,
-            precision=precision,
-            rounding=rounding,
-            fit=fit,
-            none=none,
-            color=color,
-            percent=percent,
-            scale=100,
-            angle=angle
-        )
+        pass
 
     def match(
         self,
@@ -50,5 +37,4 @@ class HWB(base.HWB):
         fullmatch: bool = True
     ) -> tuple[tuple[Vector, float], int] | None:
         """Match a CSS color string."""
-
-        return parse.parse_css(self, string, start, fullmatch)
+        pass

@@ -21,53 +21,22 @@ KE = 8  # KAPPA * EPSILON = 8
 
 def y_to_lstar(y: float) -> float:
     """Convert XYZ Y to Lab L*."""
-
-    fy = alg.nth_root(y, 3) if y > EPSILON else (KAPPA * y + 16) / 116
-    return (116.0 * fy) - 16.0
+    pass
 
 
 def lstar_to_y(lstar: float) -> float:
     """Convert Lab L* to XYZ Y."""
-
-    fy = (lstar + 16) / 116
-    y = fy ** 3 if lstar > KE else lstar / KAPPA
-    return y
+    pass
 
 
 def lab_to_xyz(lab: Vector, white: VectorLike) -> Vector:
     """Convert CIE Lab to XYZ using the reference white."""
-
-    l, a, b = lab
-
-    # compute `f`, starting with the luminance-related term
-    fy = (l + 16) / 116
-    fx = a / 500 + fy
-    fz = fy - b / 200
-
-    # compute `xyz`
-    xyz = [
-        fx ** 3 if fx > EPSILON3 else (116 * fx - 16) / KAPPA,
-        fy ** 3 if l > KE else l / KAPPA,
-        fz ** 3 if fz > EPSILON3 else (116 * fz - 16) / KAPPA
-    ]
-
-    # Compute XYZ by scaling `xyz` by reference `white`
-    return alg.multiply_x3(xyz, white, dims=alg.D1)
+    pass
 
 
 def xyz_to_lab(xyz: Vector, white: VectorLike) -> Vector:
     """Convert XYZ to CIE Lab using the reference white."""
-
-    # compute `xyz`, which is XYZ scaled relative to reference white
-    xyz = alg.divide_x3(xyz, white, dims=alg.D1)
-    # Compute `fx`, `fy`, and `fz`
-    fx, fy, fz = (alg.nth_root(i, 3) if i > EPSILON else (KAPPA * i + 16) / 116 for i in xyz)
-
-    return [
-        (116.0 * fy) - 16.0,
-        500.0 * (fx - fy),
-        200.0 * (fy - fz)
-    ]
+    pass
 
 
 class Lab(Labish, Space):
@@ -84,25 +53,19 @@ class Lab(Labish, Space):
 
     def __init__(self, **kwargs: Any):
         """Initialize."""
-
-        super().__init__(**kwargs)
-        order = alg.order(round(self.channels[self.indexes()[0]].high, 5))
-        self.achromatic_threshold = max((1 * 10.0 ** order) / 1_000_000, 1e-12)
+        pass
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Check if color is achromatic."""
-
-        return alg.rect_to_polar(coords[1], coords[2])[0] < self.achromatic_threshold
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ D50 from Lab."""
-
-        return lab_to_xyz(coords, util.xy_to_xyz(self.white()))
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ D50 to Lab."""
-
-        return xyz_to_lab(coords, util.xy_to_xyz(self.white()))
+        pass
 
 
 class CIELab(Lab):

@@ -18,19 +18,12 @@ import math
 
 def srgb_to_lrgb(rgb: Vector) -> Vector:
     """Convert sRGB to Prismatic."""
-
-    l = max(rgb)
-    s = sum(rgb)
-    return [l] + ([(c / s) for c in rgb] if s != 0 else [0, 0, 0])
+    pass
 
 
 def lrgb_to_srgb(lrgb: Vector) -> Vector:
     """Convert Prismatic to sRGB."""
-
-    rgb = lrgb[1:]
-    l = lrgb[0]
-    mx = max(rgb)
-    return [(l * c) / mx for c in rgb] if mx != 0 else [0, 0, 0]
+    pass
 
 
 class Prismatic(Luminant, Space):
@@ -57,22 +50,12 @@ class Prismatic(Luminant, Space):
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Test if color is achromatic."""
-
-        if math.isclose(0.0, coords[0], abs_tol=util.ACHROMATIC_THRESHOLD_SM):
-            return True
-
-        white = [1, 1, 1]
-        for x in alg.vcross(coords[:-1], white):
-            if not math.isclose(0.0, x, abs_tol=util.ACHROMATIC_THRESHOLD_SM):
-                return False
-        return True
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To sRGB."""
-
-        return lrgb_to_srgb(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From sRGB."""
-
-        return srgb_to_lrgb(coords)
+        pass

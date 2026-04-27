@@ -19,5 +19,4 @@ class Scale(Fit):
         **kwargs: Any
     ) -> None:
         """Scale the color within its gamut but preserve L and h as much as possible."""
-
-        scale_rgb(color, scale_space=space, **kwargs)
+        pass

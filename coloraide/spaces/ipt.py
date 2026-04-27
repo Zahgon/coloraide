@@ -44,16 +44,12 @@ IPT_TO_LMS_P = [
 
 def xyz_to_ipt(xyz: Vector) -> Vector:
     """XYZ to IPT."""
-
-    lms_p = [alg.spow(c, 0.43) for c in alg.matmul_x3(XYZ_TO_LMS, xyz, dims=alg.D2_D1)]
-    return alg.matmul_x3(LMS_P_TO_IPT, lms_p, dims=alg.D2_D1)
+    pass
 
 
 def ipt_to_xyz(ipt: Vector) -> Vector:
     """IPT to XYZ."""
-
-    lms = [alg.nth_root(c, 0.43) for c in alg.matmul_x3(IPT_TO_LMS_P, ipt, dims=alg.D2_D1)]
-    return alg.matmul_x3(LMS_TO_XYZ, lms, dims=alg.D2_D1)
+    pass
 
 
 class IPT(Lab):
@@ -76,15 +72,12 @@ class IPT(Lab):
 
     def lightness_name(self) -> str:
         """Get lightness name."""
-
-        return "i"
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ."""
-
-        return ipt_to_xyz(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ."""
-
-        return xyz_to_ipt(coords)
+        pass

@@ -41,52 +41,7 @@ def okhsv_to_oklab(
     ok_coeff: list[Matrix]
 ) -> Vector:
     """Convert from Okhsv to Oklab."""
-
-    h, s, v = hsv
-    h = h / 360.0
-
-    l = toe_inv(v)
-
-    a = b = 0.0
-
-    # Avoid processing gray or colors with undefined hues
-    if l != 0.0 and s != 0.0:
-        a_ = math.cos(math.tau * h)
-        b_ = math.sin(math.tau * h)
-
-        cusp = find_cusp(a_, b_, lms_to_rgb, ok_coeff)
-        s_max, t_max = to_st(cusp)
-        s_0 = 0.5
-        k = 1 - s_0 / s_max
-
-        # first we compute L and V as if the gamut is a perfect triangle:
-
-        # L, C when v==1:
-        l_v = 1 - s * s_0 / (s_0 + t_max - t_max * k * s)
-        c_v = s * t_max * s_0 / (s_0 + t_max - t_max * k * s)
-
-        l = v * l_v
-        c = v * c_v
-
-        # then we compensate for both toe and the curved top part of the triangle:
-        l_vt = toe_inv(l_v)
-        c_vt = c_v * l_vt / l_v
-
-        l_new = toe_inv(l)
-        c = c * l_new / l
-        l = l_new
-
-        # RGB scale
-        rs, gs, bs = oklab_to_linear_rgb([l_vt, a_ * c_vt, b_ * c_vt], lms_to_rgb)
-        scale_l = alg.nth_root(1.0 / max(max(rs, gs), max(bs, 0.0)), 3)
-
-        l = l * scale_l
-        c = c * scale_l
-
-        a = c * a_
-        b = c * b_
-
-    return [l, a, b]
+    pass
 
 
 def oklab_to_okhsv(
@@ -95,46 +50,7 @@ def oklab_to_okhsv(
     ok_coeff: list[Matrix]
 ) -> Vector:
     """Oklab to Okhsv."""
-
-    l = lab[0]
-    s = 0.0
-    v = toe(l)
-
-    c = math.sqrt(lab[1] ** 2 + lab[2] ** 2)
-    h = 0.5 + math.atan2(-lab[2], -lab[1]) / math.tau
-
-    if l != 0.0 and l != 1 and c != 0.0:
-        a_ = lab[1] / c
-        b_ = lab[2] / c
-
-        cusp = find_cusp(a_, b_, lms_to_rgb, ok_coeff)
-        s_max, t_max = to_st(cusp)
-        s_0 = 0.5
-        k = 1 - s_0 / s_max
-
-        # first we find `L_v`, `C_v`, `L_vt` and `C_vt`
-        t = t_max / (c + l * t_max)
-        l_v = t * l
-        c_v = t * c
-
-        l_vt = toe_inv(l_v)
-        c_vt = c_v * l_vt / l_v
-
-        # we can then use these to invert the step that compensates for the toe and the curved top part of the triangle:
-        rs, gs, bs = oklab_to_linear_rgb([l_vt, a_ * c_vt, b_ * c_vt], lms_to_rgb)
-        scale_l = alg.nth_root(1.0 / max(max(rs, gs), max(bs, 0.0)), 3)
-
-        l = l / scale_l
-        c = c / scale_l
-
-        c = c * toe(l) / l
-        l = toe(l)
-
-        # we can now compute v and s:
-        v = l / l_v
-        s = (s_0 + t_max) * c_v / ((t_max * s_0) + t_max * k * c_v)
-
-    return [util.constrain_hue(h * 360), s, v]
+    pass
 
 
 class Okhsv(HSV):
@@ -158,10 +74,8 @@ class Okhsv(HSV):
 
     def to_base(self, coords: Vector) -> Vector:
         """To Oklab from Okhsv."""
-
-        return okhsv_to_oklab(coords, LMS_TO_SRGBL, SRGBL_COEFF)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From Oklab to Okhsv."""
-
-        return oklab_to_okhsv(coords, LMS_TO_SRGBL, SRGBL_COEFF)
+        pass

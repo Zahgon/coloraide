@@ -24,11 +24,7 @@ class XYZD65(RGBish, Space):
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Is achromatic."""
-
-        for x in alg.vcross(coords, util.xy_to_xyz(self.white())):
-            if not math.isclose(0.0, x, abs_tol=util.ACHROMATIC_THRESHOLD_SM):
-                return False
-        return True
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """
@@ -36,8 +32,7 @@ class XYZD65(RGBish, Space):
 
         Any needed chromatic adaptation is handled in the parent Color object.
         """
-
-        return coords
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """
@@ -45,5 +40,4 @@ class XYZD65(RGBish, Space):
 
         Any needed chromatic adaptation is handled in the parent Color object.
         """
-
-        return coords
+        pass

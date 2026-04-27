@@ -29,29 +29,19 @@ class CAM02UCS(Lab):
 
     def lightness_name(self) -> str:
         """Get lightness name."""
-
-        return "j"
+        pass
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Check if color is achromatic."""
-
-        m = cam_ucs_to_cam_jmh(coords, self.MODEL)[1]
-        return abs(m) < self.achromatic_threshold
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To base from UCS."""
-
-        return cam_ucs_to_cam_jmh(coords, self.MODEL)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From base to UCS."""
-
-        # Account for negative colorfulness by reconverting as this can many times corrects the problem
-        if coords[1] < 0:
-            cam16 = xyz_to_cam(cam_to_xyz(J=coords[0], M=coords[1], h=coords[2], env=self.ENV), env=self.ENV)
-            coords = [cam16[0], cam16[5], cam16[2]]
-
-        return cam_jmh_to_cam_ucs(coords, self.MODEL)
+        pass
 
 
 class CAM02LCD(CAM02UCS):

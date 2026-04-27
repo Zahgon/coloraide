@@ -29,12 +29,4 @@ class CCT(Plugin, metaclass=ABCMeta):
 
 def cct(name: str | None, color: type[AnyColor] | AnyColor) -> CCT:
     """Get the appropriate contrast plugin."""
-
-    if name is None:
-        name = color.CCT
-
-    method = color.CCT_MAP.get(name)
-    if not method:
-        raise ValueError(f"'{name}' CCT method is not supported")
-
-    return method
+    pass

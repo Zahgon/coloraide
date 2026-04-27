@@ -25,15 +25,12 @@ class Rec709(sRGBLinear):
 
     def linear(self) -> str:
         """Return linear version of the RGB (if available)."""
-
-        return self.BASE
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from Rec. 709."""
-
-        return eotf_bt1886(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to Rec. 709."""
-
-        return inverse_eotf_bt1886(coords)
+        pass

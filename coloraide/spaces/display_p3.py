@@ -13,15 +13,12 @@ class DisplayP3(sRGBLinear):
 
     def linear(self) -> str:
         """Return linear version of the RGB (if available)."""
-
-        return self.BASE
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from Display P3."""
-
-        return eotf_srgb(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to Display P3."""
-
-        return inverse_eotf_srgb(coords)
+        pass

@@ -37,63 +37,11 @@ class BlackBodyCurve:
         chromaticity: str = 'uv-1960'
     ) -> None:
         """Initialize."""
-
-        self.cmfs = cmfs
-        self.white = util.xy_to_xyz(white)
-        self.planck_step = planck_step
-        self.to_uv = util.xy_to_uv_1960 if chromaticity == 'uv-1960' else util.xy_to_uv
-
-        # Low temperature range
-        start = 1000
-        end = 20000
-        step = 100
-        inc = (end - start) / step
-        count = step + 1
-        points = []
-        domain = []
-        for r in range(count):
-            k = r * inc + start
-            u, v = self.to_uv(
-                planck.temp_to_xy_planckian_locus(
-                    k, self.cmfs, self.white, self.cmfs.start, self.cmfs.end, self.planck_step
-                )
-            )
-            domain.append(k)
-            points.append([u, v])
-        self.spline = alg.interpolate(points, domain=domain, method='sprague')
-
-        # High temperature range
-        start = end
-        end = 100000
-        step = 150
-        inc = (end - start) / step
-        count = step + 1
-        points = []
-        domain.clear()
-        for r in range(count):
-            k = r * inc + start
-            u, v = self.to_uv(
-                planck.temp_to_xy_planckian_locus(
-                    k, self.cmfs, self.white, self.cmfs.start, self.cmfs.end, self.planck_step
-                )
-            )
-            domain.append(k)
-            points.append([u, v])
-        self.spline2 = alg.interpolate(points, domain=domain, method='sprague')
+        pass
 
     def __call__(self, temp: float, exact: bool = False) -> Vector:
         """Get the uv for the given temp."""
-
-        if exact:
-            return self.to_uv(
-                planck.temp_to_xy_planckian_locus(
-                    temp, self.cmfs, self.white, self.cmfs.start, self.cmfs.end, self.planck_step
-                )
-            )
-        else:
-            if temp <= 20000:
-                return self.spline(temp)
-            return self.spline2(temp)
+        pass
 
 
 class Ohno2013(CCT):
@@ -135,9 +83,7 @@ class Ohno2013(CCT):
         planck_step: int = 5
     ):
         """Initialize."""
-
-        self.white = white
-        self.blackbody = BlackBodyCurve(cmfs, white, planck_step, self.CHROMATICITY)
+        pass
 
     def to_cct(
         self,
@@ -150,86 +96,7 @@ class Ohno2013(CCT):
         **kwargs: Any
     ) -> Vector:
         """Calculate a color's CCT."""
-
-        u, v = color.split_chromaticity(self.CHROMATICITY)[:-1]
-        last = samples - 1
-        index = 0
-        table = []  # type: list[tuple[float, float, float, float]]
-
-        # Each iteration we narrow the range until we are close enough
-        for _ in range(iterations):
-            table.clear()
-            lowest = math.inf
-            index = 0
-
-            # Generate the Planckian table while tracking lowest distance
-            for j in range(samples):
-                k = alg.lerp(start, end, j / last)
-                u2, v2 = self.blackbody(k, exact=exact)
-                di = math.sqrt((u2 - u) ** 2 + (v2 - v) ** 2)
-                if di < lowest:
-                    lowest = di
-                    index = j
-                table.append((k, u2, v2, di))
-
-            # Set next iteration's range to include our best result +/-1
-            # If our best result was on the edge, that edge remains the boundary
-            start = table[index - 1][0] if index > 0 else table[index][0]
-            end = table[index + 1][0] if index < last else table[index][0]
-
-        # Select the closest 3 values. Get precise values instead of our
-        # approximated spline value so we can get the most accurate result.
-        ti = table[index][0]
-        if not exact:
-            ui, vi = self.blackbody(ti, exact=True)
-            di = math.sqrt((ui - u) ** 2 + (vi - v) ** 2)
-        else:
-            di = table[index][-1]
-
-        if index == 0 or not exact:
-            tp = ti - 1e-4 if index == 0 else table[index - 1][0]
-            up, vp = self.blackbody(tp, exact=True)
-            dp = math.sqrt((up - u) ** 2 + (vp - v) ** 2)
-        else:
-            tp, up, vp, dp = table[index - 1]
-
-        if index == last or not exact:
-            tn = ti + 1e-4 if index == last else table[index + 1][0]
-            un, vn = self.blackbody(tn, exact=True)
-            dn = math.sqrt((un - u) ** 2 + (vn - v) ** 2)
-        else:
-            tn, un, vn, dn = table[index + 1]
-
-        # Triangular solution
-        l = math.sqrt((un - up) ** 2 + (vn - vp) ** 2)
-        x = (dp ** 2 - dn ** 2 + l ** 2) / (2 * l)
-        t = tp + (tn - tp) * (x / l)
-        vtx = vp + (vn - vp) * (x / l)
-        sign = alg.sgn(v - vtx)
-        duv = (dp ** 2 - x ** 2) ** (1 / 2) * sign
-
-        # Parabolic solution
-        if abs(duv) >= 0.002:
-            x = (tn - ti) * (tp - tn) * (ti - tp)
-            a = (
-                tp * (dn - di) +
-                ti * (dp - dn) +
-                tn * (di - dp)
-            ) * (x ** -1)
-            b = -(
-                (tp ** 2) * (dn - di) +
-                (ti ** 2) * (dp - dn) +
-                (tn ** 2) * (di - dp)
-            ) * (x ** -1)
-            c = -(
-                (dp * ti * tn) * (tn - ti) +
-                (di * tp * tn) * (tp - tn) +
-                (dn * tp * ti) * (ti - tp)
-            ) * (x ** -1)
-            t = -b / (2 * a)
-            duv = (a * (t ** 2) + b * t + c) * sign
-
-        return [t, duv]
+        pass
 
     def from_cct(
         self,
@@ -238,17 +105,4 @@ class Ohno2013(CCT):
         **kwargs: Any
     ) -> tuple[tuple[float, float], str]:
         """Calculate a color that satisfies the CCT using Planck's law."""
-
-        u0, v0 = self.blackbody(kelvin, exact=True)
-        if duv:
-            u1, v1 = self.blackbody(kelvin + 0.01, exact=True)
-            du = u0 - u1
-            dv = v0 - v1
-            di = math.sqrt(du ** 2 + dv ** 2)
-            if di:
-                du /= di
-                dv /= di
-                u0 = u0 - duv * dv
-                v0 = v0 + duv * du
-
-        return (u0, v0), self.CHROMATICITY
+        pass

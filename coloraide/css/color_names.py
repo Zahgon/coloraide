@@ -168,18 +168,14 @@ val2name_map = {v: k for k, v in name2val_map.items()}  # type: dict[tuple[float
 
 def to_name(value: Vector) -> str | None:
     """Convert CSS hex to webcolor name."""
-
-    return val2name_map.get(tuple(alg.round_half_up(c * 255) for c in value), None)
+    pass
 
 
 def from_name(name: str) -> Vector | None:
     """Convert CSS hex to webcolor name."""
-
-    value = name2val_map.get(name.lower(), None)
-    return [c / 255 for c in value] if value is not None else value
+    pass
 
 
 def has_name(name: str) -> bool:
     """Check if name is in color map."""
-
-    return name.lower() in name2val_map
+    pass

@@ -97,112 +97,37 @@ class Version(VersionSpec):
         pre: int = 0, post: int = 0, dev: int = 0
     ) -> Version:
         """Validate version info."""
-
-        # Ensure all parts are positive integers.
-        for value in (major, minor, micro, pre, post):
-            if not (isinstance(value, int) and value >= 0):
-                raise ValueError("All version parts except 'release' should be integers.")
-
-        if release not in REL_MAP:
-            raise ValueError(f"'{release}' is not a valid release type.")
-
-        # Ensure valid pre-release (we do not allow implicit pre-releases).
-        if ".dev-candidate" < release < "final":
-            if pre == 0:
-                raise ValueError("Implicit pre-releases not allowed.")
-            elif dev:
-                raise ValueError("Version is not a development release.")
-            elif post:
-                raise ValueError("Post-releases are not allowed with pre-releases.")
-
-        # Ensure valid development or development/pre release
-        elif release < "alpha":
-            if release > ".dev" and pre == 0:
-                raise ValueError("Implicit pre-release not allowed.")
-            elif post:
-                raise ValueError("Post-releases are not allowed with pre-releases.")
-
-        # Ensure a valid normal release
-        else:
-            if pre:
-                raise ValueError("Version is not a pre-release.")
-            elif dev:
-                raise ValueError("Version is not a development release.")
-
-        return super().__new__(cls, major, minor, micro, release, pre, post, dev)
+        pass
 
     def _is_pre(self) -> bool:
         """Is prerelease."""
-
-        return bool(self.pre > 0)
+        pass
 
     def _is_dev(self) -> bool:
         """Is development."""
-
-        return bool(self.release < "alpha")
+        pass
 
     def _is_post(self) -> bool:
         """Is post."""
-
-        return bool(self.post > 0)
+        pass
 
     def _get_dev_status(self) -> str:  # pragma: no cover
         """Get development status string."""
-
-        return DEV_STATUS[self.release]
+        pass
 
     def _get_canonical(self) -> str:
         """Get the canonical output string."""
-
-        # Assemble major, minor, micro version and append `pre`, `post`, or `dev` if needed..
-        if self.micro == 0 and self.major != 0:
-            ver = f"{self.major}.{self.minor}"
-        else:
-            ver = f"{self.major}.{self.minor}.{self.micro}"
-        if self._is_pre():
-            ver += f'{REL_MAP[self.release]}{self.pre}'
-        if self._is_post():
-            ver += f".post{self.post}"
-        if self._is_dev():
-            ver += f".dev{self.dev}"
-
-        return ver
+        pass
 
 
 def parse_version(ver: str) -> Version:
     """Parse version into a comparable Version tuple."""
-
-    m = RE_VER.match(ver)
-
-    if m is None:
-        raise ValueError(f"'{ver}' is not a valid version")
-
-    # Handle major, minor, micro
-    major = int(m.group('major'))
-    minor = int(m.group('minor')) if m.group('minor') else 0
-    micro = int(m.group('micro')) if m.group('micro') else 0
-
-    # Handle pre releases
-    if m.group('type'):
-        release = PRE_REL_MAP[m.group('type')]
-        pre = int(m.group('pre'))
-    else:
-        release = "final"
-        pre = 0
-
-    # Handle development releases
-    dev = m.group('dev') if m.group('dev') else 0
-    if m.group('dev'):
-        dev = int(m.group('dev'))
-        release = '.dev-' + release if pre else '.dev'
-    else:
-        dev = 0
-
-    # Handle post
-    post = int(m.group('post')) if m.group('post') else 0
-
-    return Version(major, minor, micro, release, pre, post, dev)
+    pass
 
 
-__version_info__ = Version(8, 9, 0, "final")
-__version__ = __version_info__._get_canonical()
+try:
+    __version_info__ = Version(8, 9, 0, "final")
+    __version__ = __version_info__._get_canonical()
+except (NotImplementedError, TypeError, AttributeError):
+    __version_info__ = None  # type: ignore[assignment]
+    __version__ = "0.0.0"

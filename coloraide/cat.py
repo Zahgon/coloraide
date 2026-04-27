@@ -23,7 +23,7 @@ WHITES = {
         "D65": (0.31270, 0.32900),  # Use 4 digits like everyone (0.31272, 0.32903)
         "D75": (0.29903, 0.31488),
         "ACES-D60": (0.32168, 0.33767),
-        "ASTM-E308-D65": cast('tuple[float, float]', tuple(util.xyz_to_xyY([0.95047, 1.0, 1.08883])[:-1])),
+        "ASTM-E308-D65": (0.0, 0.0),  # stubbed
         "E": (1 / 3, 1 / 3),
         "F2": (0.37210, 0.37510),
         "F7": (0.31290, 0.32920),
@@ -65,11 +65,7 @@ def calc_adaptation_matrices(
 
     http://www.brucelindbloom.com/index.html?Math.html
     """
-
-    src = alg.matmul_x3(m, util.xy_to_xyz(w1), dims=alg.D2_D1)
-    dest = alg.matmul_x3(m, util.xy_to_xyz(w2), dims=alg.D2_D1)
-    m2 = alg.diag(alg.divide_x3(dest, src, dims=alg.D1))
-    return alg.matmul_x3(alg.solve(m, m2), m, dims=alg.D2)
+    pass
 
 class CAT(Plugin, metaclass=ABCMeta):
     """Chromatic adaptation."""
@@ -79,6 +75,7 @@ class CAT(Plugin, metaclass=ABCMeta):
     @abstractmethod
     def adapt(self, w1: tuple[float, float], w2: tuple[float, float], xyz: VectorLike) -> Vector:
         """Adapt a given XYZ color using the provided white points."""
+        pass
 
 
 class VonKries(CAT):
@@ -107,12 +104,7 @@ class VonKries(CAT):
         the same. Once the matrices are retrieved, Just make sure we use the correct one
         based on which white point is the source.
         """
-
-        # We are already using the correct white point
-        if w1 == w2:
-            return [*xyz]
-
-        return alg.matmul_x3(calc_adaptation_matrices(w1, w2, self.MATRIX), xyz, dims=alg.D2_D1)
+        pass
 
 
 class Bradford(VonKries):

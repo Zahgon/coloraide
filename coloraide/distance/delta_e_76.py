@@ -13,8 +13,7 @@ class DE76(DeltaE):
 
     def __init__(self, space: str = 'lab-d65'):
         """Initialize."""
-
-        self.space = space
+        pass
 
     def distance(
         self,
@@ -30,11 +29,4 @@ class DE76(DeltaE):
 
         Basically this is Euclidean distance in the Lab space.
         """
-
-        if space is None:
-            space = self.space
-        if not isinstance(color.CS_MAP[space], CIELab):
-            raise ValueError("Distance color space must be a CIE Lab color space.")
-
-        # Equation (1)
-        return distance_euclidean(color, sample, space=space)
+        pass

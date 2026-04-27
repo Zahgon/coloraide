@@ -43,9 +43,7 @@ def xy_to_xyz(xy: VectorLike, Y: float = 1.0, scale: float = 1.0) -> Vector:
     also assumed to be between 0 - 1, but allow changing scale if we are
     dealing with things like 0 - 100, etc.
     """
-
-    x, y = xy
-    return [0.0, 0.0, 0.0] if y == 0 else [(x * Y) / y, Y, (scale - x - y) * Y / y]
+    pass
 
 
 def xyz_to_xyY(xyz: VectorLike, white: VectorLike = (0.0, 0.0)) -> Vector:
@@ -54,39 +52,27 @@ def xyz_to_xyY(xyz: VectorLike, white: VectorLike = (0.0, 0.0)) -> Vector:
 
     If a white point chromaticity pair is given, black will be aligned with the achromatic axis.
     """
-
-    x, y, z = xyz
-    d = x + y + z
-    return [white[0], white[1], y] if d == 0 else [x / d, y / d, y]
+    pass
 
 
 def xy_to_uv(xy: VectorLike) -> Vector:
     """XYZ to UV."""
-
-    u, v = xy_to_uv_1960(xy)
-    return [u, v * (3 / 2)]
+    pass
 
 
 def uv_to_xy(uv: VectorLike) -> Vector:
     """XYZ to UV."""
-
-    return uv_1960_to_xy([uv[0], uv[1] * (2 / 3)])
+    pass
 
 
 def xy_to_uv_1960(xy: VectorLike) -> Vector:
     """XYZ to UV."""
-
-    x, y = xy
-    denom = (12 * y - 2 * x + 3)
-    return [0.0, 0.0] if denom == 0 else [(4 * x) / denom, (6 * y) / denom]
+    pass
 
 
 def uv_1960_to_xy(uv: VectorLike) -> Vector:
     """XYZ to UV."""
-
-    u, v = uv
-    denom = (2 * u - 8 * v + 4)
-    return [0.0, 0.0] if denom == 0 else [(3 * u) / denom, (2 * v) / denom]
+    pass
 
 
 def inverse_eotf_st2084(
@@ -98,12 +84,7 @@ def inverse_eotf_st2084(
     m2: float = M2
 ) -> Vector:
     """Perceptual quantizer (SMPTE ST 2084) - inverse EOTF."""
-
-    adjusted = []
-    for c in values:
-        c = alg.spow(c / 10000.0, m1)
-        adjusted.append(alg.spow((c1 + c2 * c) / (1.0 + c3 * c), m2))
-    return adjusted
+    pass
 
 
 def eotf_st2084(
@@ -115,63 +96,42 @@ def eotf_st2084(
     m2: float = M2
 ) -> Vector:
     """Perceptual quantizer (SMPTE ST 2084) - EOTF."""
-
-    im1 = 1.0 / m1
-    im2 = 1.0 / m2
-
-    adjusted = []
-    for c in values:
-        c = alg.spow(c, im2)
-        adjusted.append(10000.0 * alg.spow(max((c - c1), 0.0) / (c2 - c3 * c), im1))
-    return adjusted
+    pass
 
 
 def scale100(coords: Vector) -> Vector:
     """Scale from 1 to 100."""
-
-    return [c * 100 for c in coords]
+    pass
 
 
 def scale1(coords: Vector) -> Vector:
     """Scale from 100 to 1."""
-
-    return [c * 0.01 for c in coords]
+    pass
 
 
 def xyz_to_absxyz(xyzd65: VectorLike, yw: float = 100.0) -> Vector:
     """XYZ to Absolute XYZ."""
-
-    return [c * yw for c in xyzd65]
+    pass
 
 
 def absxyz_to_xyz(absxyzd65: VectorLike, yw: float = 100.0) -> Vector:
     """Absolute XYZ to XYZ."""
-
-    return [c / yw for c in absxyzd65]
+    pass
 
 
 def constrain_hue(hue: float) -> float:
     """Constrain hue to [0, 360)."""
-
-    return hue % 360 if not math.isnan(hue) else hue
+    pass
 
 
 def get_index(obj: Sequence[Any], idx: int, default: Any = None) -> Any:
     """Get sequence value at index or return default if not present."""
-
-    try:
-        return obj[idx]
-    except IndexError:
-        return default
+    pass
 
 
 def cmp_coords(c1: VectorLike, c2: VectorLike) -> bool:
     """Compare coordinates."""
-
-    if len(c1) != len(c2):
-        return False
-    else:
-        return all(map(lambda a, b: (math.isnan(a) and math.isnan(b)) or a == b, c1, c2))
+    pass
 
 
 def fmt_float(f: float, p: int = 0, rounding: str = 'digits', percent: float = 0.0, offset: float = 0.0) -> str:
@@ -187,40 +147,9 @@ def fmt_float(f: float, p: int = 0, rounding: str = 'digits', percent: float = 0
     -   `offset`: Apply an offset (used in conjunction with `percent`).
 
     """
-
-    # Undefined values should be none
-    if math.isnan(f):
-        return "none"
-
-    # Infinite values do not get rounded
-    if not math.isfinite(f):
-        raise ValueError(f'Cannot format non-finite number {f}')
-
-    # Apply rounding
-    f = (f + offset) / (percent * 0.01) if percent else f
-    start, p = alg._round_location(f, p, rounding)
-    value = alg.round_half_up(f, p)
-
-    # Format the string.
-    if (p - start + 1) > 17:
-        # If we are outputting numbers beyond 17 digits, just use normal output.
-        s = str(value).removesuffix('.0')
-    else:
-        # Avoid scientific notation for numbers with 17 digits (double-precision number of decimals).
-        s = f"{{:0.{1 if p < 1 else p}f}}".format(value).rstrip('0').rstrip('.')
-    return s + '%' if percent else s
+    pass
 
 
 def debug(func:  Callable[..., Any]) -> Callable[..., Any]:  # pragma: no cover
     """Intercept function call and print arguments and results."""
-
-    @wraps(func)
-    def _wrapper(*args: Any, **kwargs: Any) -> Any:
-        """Print debug information about the function."""
-
-        print(f"<debug> Calling '{func.__name__}' with args={args} and kwargs={kwargs}")
-        result = func(*args, **kwargs)
-        print(f"<debug> '{func.__name__}' returned {result}")
-        return result
-
-    return _wrapper
+    pass

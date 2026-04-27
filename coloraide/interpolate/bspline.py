@@ -18,17 +18,11 @@ class InterpolatorBSpline(InterpolatorContinuous[AnyColor]):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize."""
-
-        self.end_cond = kwargs.get('end_cond', None)  # type: str | None
-        super().__init__(*args, **kwargs)
+        pass
 
     def setup(self) -> None:
         """Optional setup."""
-
-        # Process undefined values
-        self.handle_undefined()
-        self.spline = alg.BSplineInterpolator  # type: type[alg._CubicInterpolator]
-        self.spline.preprocess(self.coordinates, end_cond=self.end_cond)
+        pass
 
     def interpolate(
         self,
@@ -36,25 +30,7 @@ class InterpolatorBSpline(InterpolatorContinuous[AnyColor]):
         index: int
     ) -> Vector:
         """Interpolate."""
-
-        # Prepare in-boundary coordinates
-        coords = [*zip(*self.coordinates[index - 1:index + 3])]
-
-        # Apply interpolation to each channel
-        channels = []
-        for i in range(len(self.coordinates[0])):
-
-            t = self.ease(point, i)
-
-            # If `t` ends up spilling out past our boundaries, we need to extrapolate
-            p0, p1, p2, p3 = coords[i]
-            channels.append(self.spline.interpolate(p0, p1, p2, p3, t))
-
-        # Small adjustment for floating point math and alpha channels
-        if 1 - channels[-1] < 1e-6:
-            channels[-1] = 1
-
-        return channels
+        pass
 
 
 class BSpline(Interpolate):
@@ -64,5 +40,4 @@ class BSpline(Interpolate):
 
     def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:
         """Return the B-spline interpolator."""
-
-        return InterpolatorBSpline(*args, **kwargs)
+        pass

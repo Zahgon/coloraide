@@ -28,23 +28,12 @@ FROM_IAB = [
 
 def sucs_to_xyz(ich: Vector) -> Vector:
     """From sUCS to XYZ."""
-
-    i, c, h = ich
-    c = (math.exp(0.0252 * c) - 1) / 0.0447
-    r = math.radians(h)
-    a, b = c * math.cos(r), c * math.sin(r)
-    lms = [alg.nth_root(x, 0.43) for x in alg.matmul_x3(FROM_IAB, [i, a, b], dims=alg.D2_D1)]
-    return alg.matmul_x3(LMS_TO_XYZ, lms, dims=alg.D2_D1)
+    pass
 
 
 def xyz_to_sucs(xyz: Vector) -> Vector:
     """From XYZ to sUCS."""
-
-    lms_p = [alg.spow(i, 0.43) for i in alg.matmul_x3(XYZ_TO_LMS, xyz, dims=alg.D2_D1)]
-    i, a, b = alg.matmul_x3(TO_IAB, lms_p, dims=alg.D2_D1)
-    c = (1 / 0.0252) * math.log(1 + 0.0447 * math.sqrt(a ** 2 + b ** 2))
-    h = math.atan2(b, a) % math.tau
-    return [i, c, math.degrees(h)]
+    pass
 
 
 class sUCS(LCh):
@@ -67,23 +56,16 @@ class sUCS(LCh):
 
     def lightness_name(self) -> str:
         """Get lightness name."""
-
-        return "i"
+        pass
 
     def normalize(self, coords: Vector) -> Vector:
         """Normalize."""
-
-        if coords[1] < 0.0:
-            return self.from_base(self.to_base(coords))
-        coords[2] %= 360.0
-        return coords
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """From sCAM JMh to XYZ."""
-
-        return sucs_to_xyz(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to sCAM JMh."""
-
-        return xyz_to_sucs(coords)
+        pass

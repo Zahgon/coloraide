@@ -29,14 +29,12 @@ def lin_2020_to_xyz(rgb: Vector) -> Vector:
     (no chromatic adaptation)
     http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
     """
-
-    return alg.matmul_x3(RGB_TO_XYZ, rgb, dims=alg.D2_D1)
+    pass
 
 
 def xyz_to_lin_2020(xyz: Vector) -> Vector:
     """Convert XYZ to linear-light rec-2020."""
-
-    return alg.matmul_x3(XYZ_TO_RGB, xyz, dims=alg.D2_D1)
+    pass
 
 
 class Rec2020Linear(sRGBLinear):
@@ -49,10 +47,8 @@ class Rec2020Linear(sRGBLinear):
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from Linear Rec 2020."""
-
-        return lin_2020_to_xyz(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to Linear Rec 2020."""
-
-        return xyz_to_lin_2020(coords)
+        pass

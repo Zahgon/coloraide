@@ -21,5 +21,4 @@ class LChuv(LCh):
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Check if color is achromatic."""
-
-        return coords[0] == 0.0 or abs(coords[1]) < self.achromatic_threshold
+        pass

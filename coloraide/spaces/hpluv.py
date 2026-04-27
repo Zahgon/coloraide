@@ -38,69 +38,27 @@ from ..types import Vector
 
 def distance_line_from_origin(line: tuple[float, float]) -> float:
     """Distance line from origin."""
-
-    return abs(line[1]) / math.sqrt(line[0] ** 2 + 1)
+    pass
 
 
 def get_bounds(l: float) -> list[tuple[float, float]]:
     """Get bounds."""
-
-    result = []
-    sub1 = ((l + 16) ** 3) / 1560896
-    sub2 = sub1 if sub1 > EPSILON else l / KAPPA
-
-    g = 0
-    while g < 3:
-        c = g
-        g += 1
-        m1, m2, m3 = XYZ_TO_RGB[c]
-        g1 = 0
-        while g1 < 2:
-            t = g1
-            g1 += 1
-            top1 = (284517 * m1 - 94839 * m3) * sub2
-            top2 = (838422 * m3 + 769860 * m2 + 731718 * m1) * l * sub2 - (769860 * t) * l
-            bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t
-            result.append((top1 / bottom, top2 / bottom))  # (slope, intercept)
-    return result
+    pass
 
 
 def max_safe_chroma_for_l(l: float) -> float:
     """Get safe max chroma for lightness."""
-
-    return min(distance_line_from_origin(bound) for bound in get_bounds(l))
+    pass
 
 
 def hpluv_to_luv(hpluv: Vector) -> Vector:
     """Convert HPLuv to LCh."""
-
-    h, s, l = hpluv
-    c = 0.0
-    if l > 100 - 1e-7:
-        l = 100
-    elif l < 1e-08:
-        l = 0.0
-    else:
-        _hx_max = max_safe_chroma_for_l(l)
-        c = _hx_max * 0.01 * s
-    a, b = alg.polar_to_rect(c, h)
-    return [l, a, b]
+    pass
 
 
 def luv_to_hpluv(luv: Vector) -> Vector:
     """Convert LCh to HPLuv."""
-
-    l = luv[0]
-    c, h = alg.rect_to_polar(luv[1], luv[2])
-    s = 0.0
-    if l > 100 - 1e-7:
-        l = 100
-    elif l < 1e-08:
-        l = 0.0
-    else:
-        _hx_max = max_safe_chroma_for_l(l)
-        s = c / _hx_max * 100
-    return [util.constrain_hue(h), s, l]
+    pass
 
 
 class HPLuv(HSL):
@@ -124,28 +82,20 @@ class HPLuv(HSL):
 
     def normalize(self, coords: Vector) -> Vector:
         """Normalize coordinates."""
-
-        if coords[1] < 0:
-            return self.from_base(self.to_base(coords))
-        coords[0] %= 360.0
-        return coords
+        pass
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Check if color is achromatic."""
-
-        return abs(coords[1]) < self.achromatic_threshold or coords[2] > (100 - 1e-7) or coords[2] < 1e-08
+        pass
 
     def radial_name(self) -> str:
         """Radial name."""
-
-        return "p"
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To LChuv from HPLuv."""
-
-        return hpluv_to_luv(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From LChuv to HPLuv."""
-
-        return luv_to_hpluv(coords)
+        pass

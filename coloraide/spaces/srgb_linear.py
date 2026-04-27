@@ -28,14 +28,12 @@ def lin_srgb_to_xyz(rgb: Vector) -> Vector:
 
     D65 (no chromatic adaptation)
     """
-
-    return alg.matmul_x3(RGB_TO_XYZ, rgb, dims=alg.D2_D1)
+    pass
 
 
 def xyz_to_lin_srgb(xyz: Vector) -> Vector:
     """Convert XYZ to linear-light sRGB."""
-
-    return alg.matmul_x3(XYZ_TO_RGB, xyz, dims=alg.D2_D1)
+    pass
 
 
 class sRGBLinear(RGBish, Space):
@@ -57,19 +55,12 @@ class sRGBLinear(RGBish, Space):
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Test if color is achromatic."""
-
-        white = [1, 1, 1]
-        for x in alg.vcross(coords, white):
-            if not math.isclose(0.0, x, abs_tol=util.ACHROMATIC_THRESHOLD_SM):
-                return False
-        return True
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from sRGB Linear."""
-
-        return lin_srgb_to_xyz(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to sRGB Linear."""
-
-        return xyz_to_lin_srgb(coords)
+        pass

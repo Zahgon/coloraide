@@ -18,11 +18,4 @@ class LstarContrast(ColorContrast):
 
     def contrast(self, color1: AnyColor, color2: AnyColor, **kwargs: Any) -> float:
         """Contrast."""
-
-        l1 = color1.get('lch-d65.lightness', nans=False)
-        l2 = color2.get('lch-d65.lightness', nans=False)
-
-        if l1 > l2:
-            l2, l1 = l1, l2
-
-        return l2 - l1
+        pass

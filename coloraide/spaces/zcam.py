@@ -21,7 +21,10 @@ from .jzazbz import izazbz_to_xyz, xyz_to_izazbz
 from .cam16 import hue_quadrature, inv_hue_quadrature
 from .. import cat
 
-DEF_ILLUMINANT_BI = util.xyz_to_absxyz(util.xy_to_xyz(cat.WHITES['2deg']['E']), yw=100.0)
+try:
+    DEF_ILLUMINANT_BI = util.xyz_to_absxyz(util.xy_to_xyz(cat.WHITES['2deg']['E']), yw=100.0)
+except (NotImplementedError, TypeError, AttributeError):
+    DEF_ILLUMINANT_BI = (0.0, 0.0, 0.0)
 CAT02 = cat.CAT02.MATRIX
 CAT02_INV = [
     [1.0961238208355142, -0.27886900021828726, 0.18274517938277304],
@@ -74,28 +77,7 @@ def adapt(
     `xyz_wd`: output illuminant
     `xyz_wo`: the baseline illuminant, by default we use equal energy.
     """
-
-    yb = xyz_wb[1] / xyz_wo[1]
-    yd = xyz_wd[1] / xyz_wo[1]
-
-    rgb_b = alg.matmul_x3(CAT02, xyz_b, dims=alg.D2_D1)
-    rgb_wb = alg.matmul_x3(CAT02, xyz_wb, dims=alg.D2_D1)
-    rgb_wd = alg.matmul_x3(CAT02, xyz_wd, dims=alg.D2_D1)
-    rgb_wo = alg.matmul_x3(CAT02, xyz_wo, dims=alg.D2_D1)
-
-    d_rgb_wb = alg.add_x3(
-        alg.multiply_x3(db * yb, alg.divide_x3(rgb_wo, rgb_wb, dims=alg.D1), dims=alg.SC_D1),
-        1 - db,
-        dims=alg.D1_SC
-    )
-    d_rgb_wd = alg.add_x3(
-        alg.multiply_x3(dd * yd, alg.divide_x3(rgb_wo, rgb_wd, dims=alg.D1), dims=alg.SC_D1),
-        1 - dd,
-        dims=alg.D1_SC
-    )
-    d_rgb = alg.divide_x3(d_rgb_wb, d_rgb_wd, dims=alg.D1)
-    rgb_d = alg.multiply_x3(d_rgb, rgb_b, dims=alg.D1)
-    return alg.matmul_x3(CAT02_INV, rgb_d, dims=alg.D2_D1)
+    pass
 
 
 class Environment:
@@ -150,38 +132,7 @@ class Environment:
         Using the specified viewing conditions, and general environmental data,
         initialize anything that we can ahead of time to speed up the process.
         """
-
-        self.output_white = util.xyz_to_absxyz(util.xy_to_xyz(white), yw=100)
-        self.ref_white = [*reference_white]
-        self.surround = surround
-        self.discounting = discounting
-        xyz_w = self.ref_white
-
-        # The average luminance of the environment in `cd/m^2cd/m` (a.k.a. nits)
-        self.la = adapting_luminance
-        # The relative luminance of the nearby background
-        self.yb = background_luminance
-        # Absolute luminance of the reference white.
-        yw = xyz_w[1]
-        self.fb = math.sqrt(self.yb / yw)
-        self.fl = 0.171 * alg.nth_root(self.la, 3) * (1 - math.exp((-48 / 9) * self.la))
-
-        # Surround: dark, dim, and average
-        f, self.c, _ = SURROUND[self.surround]
-        self.fs = self.c
-        self.epsilon = 3.7035226210190005e-11
-        self.rho = 1.7 * 2523 / (2 ** 5)
-        self.b = 1.15
-        self.g = 0.66
-
-        self.izw = xyz_to_izazbz(xyz_w, LMS_P_TO_IZAZBZ, self.rho)[0] - self.epsilon
-        self.qzw = (
-            2700 * alg.spow(self.izw, (1.6 * self.fs) / (self.fb ** 0.12)) *
-            ((self.fs ** 2.2) * (self.fb ** 0.5) * (self.fl ** 0.2))
-        )
-
-        # Degree of adaptation calculating if not discounting illuminant (assumed eye is fully adapted)
-        self.d = alg.clamp(f * (1 - 1 / 3.6 * math.exp((-self.la - 42) / 92)), 0, 1) if not self.discounting else 1
+        pass
 
 
 def zcam_to_xyz(
@@ -206,149 +157,22 @@ def zcam_to_xyz(
     category is given, we will fail as we have no idea which is the right one to use. Also,
     if none are given, we must fail as well as there is nothing to calculate with.
     """
-
-    # These check ensure one, and only one attribute for a given category is provided.
-    if not ((Jz is not None) ^ (Qz is not None)):
-        raise ValueError("Conversion requires one and only one: 'Jz' or 'Qz'")
-
-    if not (
-        (Cz is not None) ^ (Mz is not None) ^ (Sz is not None) ^ (Vz is not None) ^ (Kz is not None) ^ (Wz is not None)
-    ):
-        raise ValueError("Conversion requires one and only one: 'Cz', 'Mz', 'Sz', 'Vz', 'Kz', or 'Wz'")
-
-    # Hue is absolutely required
-    if not ((hz is not None) ^ (Hz is not None)):
-        raise ValueError("Conversion requires one and only one: 'hz' or 'Hz'")
-
-    # We need viewing conditions
-    if env is None:
-        raise ValueError("No viewing conditions/environment provided")
-
-    # Shortcut out if black?
-    if Jz == 0.0 or Qz == 0.0:
-        if not any((Cz, Mz, Sz, Vz, Kz, Wz)):
-            return [0.0, 0.0, 0.0]
-
-    # Break hue into Cartesian components
-    h_rad = 0.0
-    if hz is None:
-        hz = inv_hue_quadrature(Hz, HUE_QUADRATURE)  # type: ignore[arg-type]
-    h_rad = math.radians(hz % 360)
-    cos_h = math.cos(h_rad)
-    sin_h = math.sin(h_rad)
-    hp = hz
-    if hp <= HUE_QUADRATURE['h'][0]:
-        hp += 360
-    ez = 1.015 + math.cos(math.radians(89.038 + hp))
-
-    # Calculate `iz` from one of the lightness derived coordinates.
-    if Qz is None:
-        Qz = (Jz * 0.01) * env.qzw  # type: ignore[operator]
-
-    if Jz is None:
-        Jz = 100 * (Qz / env.qzw)
-
-    iz = alg.nth_root(
-        Qz / ((env.fs ** 2.2) * (env.fb ** 0.5) * (env.fl ** 0.2) * 2700), (1.6 * env.fs) / (env.fb ** 0.12)
-    )
-
-    # Calculate `Mz` from the various chroma like parameters.
-    if Sz is not None:
-        Cz = Qz * Sz ** 2 / (100 * env.qzw * env.fl ** 1.2)
-    elif Vz is not None:
-        Cz = alg.nth_root((Vz ** 2 - (Jz - 58) ** 2) / 3.4, 2)
-    elif Kz is not None:
-        Cz = alg.nth_root((((Kz - 100) / - 0.8) ** 2 - (Jz ** 2)) / 8, 2)
-    elif Wz is not None:
-        Cz = alg.nth_root((Wz - 100) ** 2 - (100 - Jz) ** 2, 2)
-
-    if Cz is not None:
-        Mz = (Cz / 100) * env.qzw
-
-    Czp = alg.spow(
-        (Mz * (env.izw ** (0.78)) * (env.fb ** 0.1)) / (100 * (ez ** 0.068) * (env.fl ** 0.2)),
-        1.0 / 0.37 / 2
-    )
-
-    # Convert back to XYZ
-    az, bz = cos_h * Czp, sin_h * Czp
-    iz += env.epsilon
-    xyz_abs = izazbz_to_xyz([iz, az, bz], IZAZBZ_TO_LMS_P, env.rho)
-
-    return util.absxyz_to_xyz(adapt(xyz_abs, env.output_white, env.ref_white, env.d, env.d))
+    pass
 
 
 def xyz_to_zcam(xyz: Vector, env: Environment, calc_hue_quadrature: bool = False) -> Vector:
     """From XYZ to ZCAM."""
-
-    # Steps 4 - 7
-    iz, az, bz = xyz_to_izazbz(
-        adapt(util.xyz_to_absxyz(xyz), env.ref_white, env.output_white, env.d, env.d),
-        LMS_P_TO_IZAZBZ,
-        env.rho
-    )
-
-    # Step 8
-    iz -= env.epsilon
-
-    # Step 9
-    hz = util.constrain_hue(math.degrees(math.atan2(bz, az)))
-
-    # Step 10
-    Hz = hue_quadrature(hz, HUE_QUADRATURE) if calc_hue_quadrature else alg.NaN
-
-    # Step 11
-    hp = hz
-    if hp <= HUE_QUADRATURE['h'][0]:
-        hp += 360
-    ez = 1.015 + math.cos(math.radians(89.038 + hp))
-
-    # Step 12
-    Qz = (
-        2700 * alg.spow(iz, (1.6 * env.fs) / (env.fb ** 0.12)) *
-        ((env.fs ** 2.2) * (env.fb ** 0.5) * (env.fl ** 0.2))
-    )
-
-    # Step 13
-    Jz = 100 * (Qz / env.qzw)
-
-    # Step 14
-    Mz = (
-        100 * ((az ** 2 + bz ** 2) ** (0.37)) *
-        ((alg.spow(ez, 0.068) * (env.fl ** 0.2)) / ((env.fb ** 0.1) * alg.spow(env.izw, 0.78)))
-    )
-
-    # Step 15
-    Cz = 100 * (Mz / env.qzw)
-
-    # Step 16
-    Sz = 100 * (env.fl ** 0.6) * alg.nth_root(Mz / Qz, 2) if Qz else 0.0
-
-    # Step 17
-    Vz = math.sqrt((Jz - 58) ** 2 + 3.4 * (Cz ** 2))
-
-    # Step 18
-    Kz = 100 - 0.8 * math.sqrt(Jz ** 2 + 8 * (Cz ** 2))
-
-    # Step 19
-    Wz = 100 - math.sqrt((100 - Jz) ** 2 + Cz ** 2)
-
-    return [Jz, Cz, hz, Qz, Mz, Sz, Vz, Kz, Wz, Hz]
+    pass
 
 
 def xyz_to_zcam_jmh(xyz: Vector, env: Environment) -> Vector:
     """XYZ to ZCAM JMh."""
-
-    zcam = xyz_to_zcam(xyz, env)
-    Jz, Mz, hz = zcam[0], zcam[4], zcam[2]
-    return [Jz, Mz, hz]
+    pass
 
 
 def zcam_jmh_to_xyz(jmh: Vector, env: Environment) -> Vector:
     """ZCAM JMh to XYZ."""
-
-    Jz, Mz, hz = jmh
-    return zcam_to_xyz(Jz=Jz, Mz=Mz, hz=hz, env=env)
+    pass
 
 
 class ZCAMJMh(LCh):
@@ -390,33 +214,24 @@ class ZCAMJMh(LCh):
 
     def normalize(self, coords: Vector) -> Vector:
         """Normalize."""
-
-        if coords[1] < 0.0:
-            return self.from_base(self.to_base(coords))
-        coords[2] %= 360.0
-        return coords
+        pass
 
     def hue_name(self) -> str:
         """Hue name."""
-
-        return "hz"
+        pass
 
     def radial_name(self) -> str:
         """Radial name."""
-
-        return "mz"
+        pass
 
     def lightness_name(self) -> str:
         """Get lightness name."""
-
-        return "jz"
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """From ZCAM JMh to XYZ."""
-
-        return zcam_jmh_to_xyz(coords, self.ENV)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to ZCAM JMh."""
-
-        return xyz_to_zcam_jmh(coords, self.ENV)
+        pass

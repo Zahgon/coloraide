@@ -32,29 +32,7 @@ def cam_jmh_to_cam_ucs(
     We can actually go between simply by removing the old colorfulness multiplier
     and then adding the new adjusted multiplier. Then we can just adjust lightness.
     """
-
-    J, M, h = jmh
-
-    if J == 0.0:
-        if M == 0.0:
-            return [0.0, 0.0, 00]
-        J = alg.EPS
-
-    c1, c2 = COEFFICENTS[model][1:]
-
-    # Only in extreme cases (outside the visible spectrum)
-    # can the input value for log become negative.
-    # Avoid domain error by forcing zero.
-    M = math.log(max(1 + c2 * M, 1.0)) / c2
-    a = M * math.cos(math.radians(h))
-    b = M * math.sin(math.radians(h))
-
-    absj = abs(J)
-    return [
-        math.copysign((1 + 100 * c1) * absj / (1 + c1 * absj), J),
-        a,
-        b
-    ]
+    pass
 
 
 def cam_ucs_to_cam_jmh(ucs: Vector, model: str) -> Vector:
@@ -64,26 +42,7 @@ def cam_ucs_to_cam_jmh(ucs: Vector, model: str) -> Vector:
     We can actually go between simply by removing the old colorfulness multiplier
     and then adding the new adjusted multiplier. Then we can just adjust lightness.
     """
-
-    J, a, b = ucs
-
-    if J == 0.0:
-        if a == b == 0.0:
-            return [0.0, 0.0, 00]
-        J = alg.EPS
-
-    c1, c2 = COEFFICENTS[model][1:]
-
-    M = math.sqrt(a ** 2 + b ** 2)
-    M = (math.exp(M * c2) - 1) / c2
-    h = math.degrees(math.atan2(b, a))
-
-    absj = abs(J)
-    return [
-        math.copysign(absj / (1 - c1 * (absj - 100)), J),
-        M,
-        util.constrain_hue(h)
-    ]
+    pass
 
 
 class CAM16UCS(Lab):
@@ -107,29 +66,19 @@ class CAM16UCS(Lab):
 
     def lightness_name(self) -> str:
         """Get lightness name."""
-
-        return "j"
+        pass
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Check if color is achromatic."""
-
-        m = cam_ucs_to_cam_jmh(coords, self.MODEL)[1]
-        return abs(m) < self.achromatic_threshold
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To CAM16 JMh from CAM16."""
-
-        return cam_ucs_to_cam_jmh(coords, self.MODEL)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From CAM16 JMh to CAM16."""
-
-        # Account for negative colorfulness by reconverting as this can many times corrects the problem
-        if coords[1] < 0:
-            cam16 = xyz_to_cam(cam_to_xyz(J=coords[0], M=coords[1], h=coords[2], env=self.ENV), env=self.ENV)
-            coords = [cam16[0], cam16[5], cam16[2]]
-
-        return cam_jmh_to_cam_ucs(coords, self.MODEL)
+        pass
 
 
 class CAM16LCD(CAM16UCS):

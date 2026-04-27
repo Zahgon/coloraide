@@ -187,35 +187,17 @@ REFLECTANCE = [REF_W, REF_C, REF_M, REF_Y, REF_R, REF_G, REF_B]
 
 def calculate_mixing_concentration(t: float, l1: float, l2: float) -> tuple[float, float]:
     """Calculate the concentrations of the colors based on the interpolation progress and luminance."""
-
-    # Get luminance but use a very small lightness if lightness is zero
-    if l1 <= 0.0:
-        l1 = EPSILON
-    if l2 <= 0.0:
-        l2 = EPSILON
-
-    # Calculate the concentration of each reflectance curve.
-    # This applies an easing function to the interpolation progress
-    # that biases the color mixing towards the more luminous color.
-    c1 = (1 - t) ** 2 * l1
-    c2 = t ** 2 * l2
-    total = c1 + c2
-    c1 /= total
-    c2 /= total
-
-    return c1, c2
+    pass
 
 
 def km_to_ks(r: float) -> float:
     """Kubelka-Munk function that convert the reflectance to the KS coefficients that can be linearly mixed."""
-
-    return (1 - r) ** 2 / (2 * r)
+    pass
 
 
 def km_to_r(ks: float) -> float:
     """Kubelka-Munk function that converts the absorption/scattering (KS) back to reflectance values."""
-
-    return 1 + ks - alg.nth_root(ks ** 2 + 2 * ks, 2)
+    pass
 
 
 def xyz_to_concentration(xyz: Vector) -> Vector:
@@ -224,25 +206,7 @@ def xyz_to_concentration(xyz: Vector) -> Vector:
 
     Concentrations should be constrained to [0, 1].
     """
-
-    lrgb = alg.matmul_x3(XYZ_TO_RGB, xyz, dims=alg.D2_D1)
-    w = max(min(lrgb), 0.0)
-    r, g, b = lrgb[0] - w, lrgb[1] - w, lrgb[2] - w
-    cy = max(min(g, b), 0.0)
-    ma = max(min(r, b - cy), 0.0)
-    ye = max(min(r - ma, g - cy), 0.0)
-    r -= ma + ye
-    g -= cy + ye
-    b -= cy + ma
-    return [
-        min(w, 1.0),
-        min(cy, 1.0),
-        min(ma, 1.0),
-        min(ye, 1.0),
-        alg.clamp(r, 0.0, 1.0),
-        alg.clamp(g, 0.0, 1.0),
-        alg.clamp(b, 0.0, 1.0)
-    ]
+    pass
 
 
 def single_constant_xyz_to_reflectance(xyz: Vector) -> tuple[Vector, Vector]:
@@ -256,36 +220,17 @@ def single_constant_xyz_to_reflectance(xyz: Vector) -> tuple[Vector, Vector]:
     also calculate the residual, left over weights of our XYZ value and return them as well. We can
     use the residual later to better approximate colors out of gamut by adding them back in.
     """
-
-    c = xyz_to_concentration(xyz)
-    r = [alg.clamp(sum([c[j] * p[i] for j, p in enumerate(REFLECTANCE)]), EPSILON, 1.0) for i in range(SIZE)]
-    xyz2 = reflectance_to_xyz(r)
-    return r, [xyz[0] - xyz2[0], xyz[1] - xyz2[1], xyz[2] - xyz2[2]]
+    pass
 
 
 def reflectance_to_xyz(r: Vector) -> Vector:
     """Convert the reflectance value to an XYZ value."""
-
-    return [alg.vdot(r, X_BAR), alg.vdot(r, Y_BAR), alg.vdot(r, Z_BAR)]
+    pass
 
 
 def spectral_mix(xyz1: Vector, xyz2: Vector, t: float) -> Vector:
     """Interpolate two colors applying Kubelka-Munk theory."""
-
-    # Convert the colors into a reflectance curve
-    r1, res1 = single_constant_xyz_to_reflectance(xyz1)
-    r2, res2 = single_constant_xyz_to_reflectance(xyz2)
-    # Calculate weighting for for the given interpolation factor using luminance.
-    # This gives more weight to high luminance colors.
-    c1, c2 = calculate_mixing_concentration(t, xyz1[1], xyz2[1])
-
-    # Apply the Kubelka-Munk mixing.
-    r = [km_to_r(km_to_ks(r1[i]) * c1 + km_to_ks(r2[i]) * c2) for i in range(SIZE)]
-
-    # Convert the reflection back to XYZ and add back in any residual
-    xyz1 = reflectance_to_xyz(r)
-    xyz2 = [alg.lerp(r1, r2, t) for r1, r2 in zip(res1, res2)]
-    return [xyz1[0] + xyz2[0], xyz1[1] + xyz2[1], xyz1[2] + xyz2[2]]
+    pass
 
 
 class InterpolatorSpectralContinuous(InterpolatorContinuous[AnyColor]):
@@ -297,36 +242,11 @@ class InterpolatorSpectralContinuous(InterpolatorContinuous[AnyColor]):
         index: int
     ) -> Vector:
         """Interpolate."""
-
-        # Interpolate between the values of the two colors for each channel.
-        channels = []
-        idx = index - 2 if index == self.length else index - 1
-
-        # Handle spectral interpolation
-        c1, c2 = self.coordinates[idx:idx + 2]
-        channels = spectral_mix(
-            [0.0 if math.isnan(i) else i for i in c1[:-1]],
-            [0.0 if math.isnan(i) else i for i in c2[:-1]],
-            self.ease(point, 0)
-        )
-        channels.append(alg.lerp(c1[-1], c2[-1], self.ease(point, len(c1) - 1)))
-        return channels
+        pass
 
     def ease(self, t: float, channel_index: int) -> float:
         """Provide a progression time and channel index."""
-
-        progress = None
-        if self.current_easing is not None:
-            # Do we have an easing function, or mapping with a channel easing function?
-            name = self.channel_names[channel_index]
-            if isinstance(self.current_easing, Mapping):
-                progress = self.current_easing.get(name) if name == 'alpha' else None
-                if progress is None:
-                    progress = self.current_easing.get('all')
-            else:
-                progress = self.current_easing
-
-        return progress(t) if progress is not None else t
+        pass
 
 
 class InterpolatorSpectralLinear(InterpolatorLinear[AnyColor]):
@@ -338,40 +258,11 @@ class InterpolatorSpectralLinear(InterpolatorLinear[AnyColor]):
             index: int
         ) -> Vector:
             """Interpolate."""
-
-            i = (index - 1) * 2
-
-            # Apply spectral interpolation
-            c1, c2 = self.coordinates[i:i + 2]
-            aidx = len(c1) - 1
-            for i in range(len(c1)):
-                a, b = c1[i], c2[i]
-                if math.isnan(a) and math.isnan(b):
-                    if i != aidx:
-                        c1[i], c2[i] = 0.0, 0.0
-                elif math.isnan(a):
-                    c1[i] = b
-                elif math.isnan(b):
-                    c2[i] = a
-            coords = spectral_mix(c1[:-1], c2[:-1], self.ease(point, 0))
-            coords.append(alg.lerp(c1[aidx], c2[aidx], self.ease(point, aidx)))
-            return coords
+            pass
 
     def ease(self, t: float, channel_index: int) -> float:
         """Provide a progression time and channel index."""
-
-        progress = None
-        if self.current_easing is not None:
-            # Do we have an easing function, or mapping with a channel easing function?
-            name = self.channel_names[channel_index]
-            if isinstance(self.current_easing, Mapping):
-                progress = self.current_easing.get(name) if name == 'alpha' else None
-                if progress is None:
-                    progress = self.current_easing.get('all')
-            else:
-                progress = self.current_easing
-
-        return progress(t) if progress is not None else t
+        pass
 
 
 class Spectral(Interpolate):
@@ -381,13 +272,11 @@ class Spectral(Interpolate):
 
     def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:
         """Return the linear interpolator."""
-
-        return InterpolatorSpectralLinear(*args, **kwargs)
+        pass
 
     def get_space(self, space: str | None, color_cls: type[Color]) -> str:
         """Filter specified spaces."""
-
-        return SPACE
+        pass
 
     def weighted_mix(
         self,
@@ -402,106 +291,7 @@ class Spectral(Interpolate):
         **kwargs: Any
     ) -> AnyColor:
         """Mix a list of colors together with weights."""
-
-        space = self.get_space(space, color_cls)
-
-        # Get channel information
-        obj = color_cls(space, [])
-        avgs = [0.0] * SIZE
-        res_avgs = [0.0] * 4
-        counts = [0] * SIZE
-        res_counts = [0] * 4
-        wavg = 0.0
-        cavg = 0.0
-        no_weights = not weights
-        if no_weights:
-            weights = ()
-        mx = 0.0
-
-        # Sum channel values using a rolling average. Apply premultiplication and additional weighting as required.
-        count = 0
-        sentinel = Sentinel()
-        fill = 1 if no_weights else sentinel
-        for c, w in it.zip_longest(colors, [] if no_weights else weights, fillvalue=fill):  # type: ignore[arg-type]
-
-            # Handle explicit weighted cases
-            if not no_weights:
-                # If there are more weights than colors, ignore additional weights
-                if c is sentinel:
-                    break
-
-                # If there are less weights than colors, assume full weight for colors without weights
-                if w is sentinel:
-                    w = mx
-
-                # Negative weights are considered as zero weight
-                if w < 0.0:
-                    w = 0.0
-
-                # Track the largest weight so we can populate colors with no weights
-                elif w > mx:
-                    mx = w
-
-            obj.update(c)  # type: ignore[arg-type]
-
-            coords = obj.coords(nans=False)
-
-            count += 1
-
-            # Include alpha in average if it is defined. If not defined, skip, but assume color is opaque.
-            alpha = obj.alpha()
-            if math.isnan(alpha):
-                alpha = 1.0
-            else:
-                res_counts[-1] += 1
-                res_avgs[-1] += ((alpha *  w) - res_avgs[-1]) / res_counts[-1]
-
-            # Premultiply alpha
-            if premultiplied:
-                coords = [x * alpha for x in coords]
-
-            # Calculate the reflectance and residual XYZ value
-            r, res = single_constant_xyz_to_reflectance(coords)
-
-            # Adjust the weight for the spectral mixing based on the luminance
-            lfactor = w ** 2 * coords[1]
-            # Average of weights
-            wavg += (w - wavg) / count
-            # Average of concentration
-            cavg += (lfactor - cavg) / count
-
-            # Apply mixing
-            ks = 0.0
-            for i in range(SIZE):
-                # Mix the scattering and absorption coefficients
-                ks = (1 - r[i]) ** 2 / (2 * r[i])
-                counts[i] += 1
-                n = counts[i]
-                avgs[i] += (ks * lfactor - avgs[i]) / n
-
-                # Mix the residual
-                if i < 3:
-                    coord = res[i]
-                    res_counts[i] += 1
-                    n = res_counts[i]
-                    res_avgs[i] += (coord * w - res_avgs[i]) / n
-
-        if not count:
-            raise ValueError('At least one color must be provided in order to average colors')
-
-        # Convert back to reflectance
-        xyz1 = reflectance_to_xyz([km_to_r(ks / (cavg or 1)) for ks in avgs])
-
-        # Add in residual and undo premultiplication to get the final color.
-        if not wavg:
-            wavg = math.nan
-        res_avgs[-1] = alpha = math.nan if not res_counts[-1] else res_avgs[-1] / wavg
-        factor = 1 if not premultiplied or not alpha or (math.isnan(alpha) and not math.isnan(wavg)) else alpha
-        xyz = [(xyz1[0] + res_avgs[0]) / factor, (xyz1[1] + res_avgs[1]) / factor, (xyz1[2] + res_avgs[2]) / factor]
-
-        # Create the color.
-        color = obj.update(space, xyz, res_avgs[-1])
-        return color
+        pass
 
 
 class SpectralContinuous(Spectral):
@@ -511,5 +301,4 @@ class SpectralContinuous(Spectral):
 
     def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:
         """Return the linear interpolator."""
-
-        return InterpolatorSpectralContinuous(*args, **kwargs)
+        pass

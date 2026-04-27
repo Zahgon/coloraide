@@ -25,14 +25,12 @@ XYZ_TO_AP1 = [
 
 def acescg_to_xyz(acescg: Vector) -> Vector:
     """Convert ACEScc to XYZ."""
-
-    return alg.matmul_x3(AP1_TO_XYZ, acescg, dims=alg.D2_D1)
+    pass
 
 
 def xyz_to_acescg(xyz: Vector) -> Vector:
     """Convert XYZ to ACEScc."""
-
-    return alg.matmul_x3(XYZ_TO_AP1, xyz, dims=alg.D2_D1)
+    pass
 
 
 class ACEScg(sRGBLinear):
@@ -51,10 +49,8 @@ class ACEScg(sRGBLinear):
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ."""
-
-        return acescg_to_xyz(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ."""
-
-        return xyz_to_acescg(coords)
+        pass

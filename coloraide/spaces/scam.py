@@ -30,8 +30,7 @@ HUE_QUADRATURE = {
 
 def eccentricity(h: float) -> float:
     """Calculate eccentricity."""
-
-    return 1 + 0.06 * math.cos(math.radians(110 + h))
+    pass
 
 
 def adapt(xyz: Vector, xyz_ws: Vector, xyz_wd: Vector, d: float) -> Vector:
@@ -41,15 +40,7 @@ def adapt(xyz: Vector, xyz_ws: Vector, xyz_wd: Vector, d: float) -> Vector:
     This was proposed by one of the authors Li, Molin in the Colour project:
     https://github.com/colour-science/colour/pull/1349#issuecomment-3058339414
     """
-
-    lms = alg.matmul_x3(M16, xyz, dims=alg.D2_D1)
-    lms_ws = alg.matmul_x3(M16, xyz_ws, dims=alg.D2_D1)
-    lms_wd = alg.matmul_x3(M16, xyz_wd, dims=alg.D2_D1)
-
-    y_ratio = xyz_ws[1] / xyz_wd[1]
-    lms_r = alg.divide_x3(lms_wd, lms_ws, dims=alg.D1)
-    lms_a = [lms[r] * (d * y_ratio * lms_r[r] + (1 - d)) for r in range(3)]
-    return alg.matmul_x3(M16_INV, lms_a, dims=alg.D2_D1)
+    pass
 
 
 class Environment:
@@ -99,35 +90,7 @@ class Environment:
         Using the specified viewing conditions, and general environmental data,
         initialize anything that we can ahead of time to speed up the process.
         """
-
-        self.discounting = discounting
-        self.ref_white = util.xy_to_xyz(white)
-        self.surround = surround
-
-        # The average luminance of the environment in `cd/m^2cd/m` (a.k.a. nits)
-        self.la = adapting_luminance
-        # The relative luminance of the nearby background
-        self.yb = background_luminance
-        # Absolute luminance of the reference white.
-        self.input_white = util.scale100(self.ref_white)
-        self.yw = self.input_white[1]
-        # Destination luminance
-        self.output_white = alg.multiply_x3(
-            util.xy_to_xyz(WHITES['2deg']['D65']),
-            (self.la * 100) / self.yb,
-            dims=alg.D1_SC
-        )
-
-        # Surround: dark, dim, and average
-        self.c, self.fm = SURROUND[self.surround]
-
-        self.fl = 0.1710 * (self.la ** (1 / 3)) * (1 / (1 - 0.4934 * math.exp(-0.9934 * self.la)))
-        self.n = self.yb / self.yw
-        self.z = 1.48 + math.sqrt(self.n)
-        self.cz = self.c * self.z
-
-        # Factor of luminance level adaptation
-        self.d = alg.clamp(self.fm * (1 - 1 / 3.6 * math.exp((-self.la - 42) / 92)), 0, 1) if not discounting else 1
+        pass
 
 
 def scam_to_xyz(
@@ -152,107 +115,22 @@ def scam_to_xyz(
     category is given, we will fail as we have no idea which is the right one to use. Also,
     if none are given, we must fail as well as there is nothing to calculate with.
     """
-
-    # These check ensure one, and only one attribute for a given category is provided.
-    if not ((J is not None) ^ (Q is not None)):
-        raise ValueError("Conversion requires one and only one: 'J' or 'Q'")
-
-    if not ((C is not None) ^ (M is not None) ^ (D is not None) ^ (V is not None) ^ (W is not None) ^ (K is not None)):
-        raise ValueError("Conversion requires one and only one: 'C', 'M', 'D', 'V', 'W', 'K'")
-
-    # Hue is absolutely required
-    if not ((h is not None) ^ (H is not None)):
-        raise ValueError("Conversion requires one and only one: 'h' or 'H'")
-
-    # We need viewing conditions
-    if env is None:
-        raise ValueError("No viewing conditions/environment provided")
-
-    # Calculate hue
-    if h is not None:
-        h = h % 360
-    elif H is not None:
-        h = inv_hue_quadrature(H, HUE_QUADRATURE)
-
-    # Calculate `I` from one of the lightness derived coordinates.
-    Ia = 0.0
-    if J is not None:
-        Ia = J
-    elif Q is not None:
-        Ia = Q / ((2 * (env.fl ** 0.1)) / env.c)
-    I = alg.nth_root(Ia * 0.01, env.cz) * 100
-
-    # Calculate the chroma component
-    if W is not None:
-        D = 100 - W
-    elif K is not None:
-        V = 100 - K
-    if D is not None:
-        C = alg.nth_root(((D / 1.3) ** 2 - (100 - Ia) ** 2) / 1.6, 2)
-    elif V is not None:
-        C = alg.nth_root((V ** 2 - Ia ** 2) / 3, 2)
-    elif M is not None:
-        et = eccentricity(h)  # type: ignore[arg-type]
-        C = M * alg.spow(Ia, 0.27) / ((env.fl ** 0.1) * et * env.fm)
-
-    # Convert to XYZ from sUCS
-    xyz = sucs_to_xyz([I, C, h])  # type: ignore[list-item]
-
-    # Apply chromatic adaptation
-    return adapt(xyz, env.output_white, env.input_white, env.d)
+    pass
 
 
 def xyz_to_scam(xyz: Vector, env: Environment, calc_hue_quadrature: bool = False) -> Vector:
     """From XYZ to sCAM."""
-
-    # Apply chromatic adaptation
-    xyz = adapt(xyz, env.input_white, env.output_white, env.d)
-
-    # Convert from XYZ to sUCS
-    I, C, h = xyz_to_sucs(xyz)
-
-    # Eccentricity
-    et = eccentricity(h)
-
-    # Lightness
-    Ia = 100 * alg.spow(I * 0.01, env.cz)
-
-    # Brightness
-    Q = Ia * ((2 * (env.fl ** 0.1)) / env.c)
-
-    # Colorfulness
-    M = (C * (env.fl ** 0.1) * et) * alg.zdiv(1, alg.spow(Ia, 0.27), 0.0) * env.fm
-
-    # Depth
-    D = 1.3 * math.sqrt((100 - Ia) ** 2 + 1.6 * C ** 2)
-
-    # Vividness
-    V = math.sqrt(Ia ** 2 + 3 * C ** 2)
-
-    # Whiteness
-    W = 100 - D
-
-    # Blackness
-    K = 100 - V
-
-    # Hue quadrature if required
-    H = hue_quadrature(h, HUE_QUADRATURE) if calc_hue_quadrature else alg.NaN
-
-    return [Ia, C, h, Q, M, D, V, W, K, H]
+    pass
 
 
 def xyz_to_scam_jmh(xyz: Vector, env: Environment) -> Vector:
     """XYZ to sCAM JMh."""
-
-    scam = xyz_to_scam(xyz, env)
-    return [scam[0], scam[4], scam[2]]
+    pass
 
 
 def scam_jmh_to_xyz(jmh: Vector, env: Environment) -> Vector:
     """Convert sCAM JMh to XYZ."""
-
-    J, M, h = jmh
-    return scam_to_xyz(J=J, M=M, h=h, env=env)
+    pass
 
 
 class sCAMJMh(LCh):
@@ -289,33 +167,24 @@ class sCAMJMh(LCh):
 
     def lightness_name(self) -> str:
         """Get lightness name."""
-
-        return "j"
+        pass
 
     def radial_name(self) -> str:
         """Get radial name."""
-
-        return "m"
+        pass
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Check if color is achromatic."""
-
-        return coords[0] == 0.0 or abs(coords[1]) < self.achromatic_threshold
+        pass
 
     def normalize(self, coords: Vector) -> Vector:
         """Normalize."""
-
-        if coords[1] < 0.0:
-            return self.from_base(self.to_base(coords))
-        coords[2] %= 360.0
-        return coords
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """From sCAM JMh to XYZ."""
-
-        return scam_jmh_to_xyz(coords, self.ENV)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to sCAM JMh."""
-
-        return xyz_to_scam_jmh(coords, self.ENV)
+        pass

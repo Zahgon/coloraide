@@ -28,25 +28,16 @@ class xyY(Luminant, Prism, Space):
 
     def is_achromatic(self, coords: Vector) -> bool:
         """Test if color is achromatic."""
-
-        if math.isclose(0.0, coords[-1], abs_tol=1e-4):
-            return True
-
-        if not math.isclose(0.0, alg.vcross(coords[:-1], self.WHITE), abs_tol=util.ACHROMATIC_THRESHOLD_SM):
-            return False
-        return True
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ."""
-
-        return util.xy_to_xyz(coords[0:2], coords[2])
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ."""
-
-        return util.xyz_to_xyY(coords, self.white())
+        pass
 
     def lightness_name(self) -> str:
         """Get lightness name."""
-
-        return "Y"
+        pass

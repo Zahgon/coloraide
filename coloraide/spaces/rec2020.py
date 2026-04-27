@@ -30,8 +30,7 @@ def inverse_eotf_bt1886(rgb: Vector) -> Vector:
 
     When using `lb == 0`, `lw == 1`, and gamma of `2.4`, this simplifies to a simple power of `1 / 2.4`.
     """
-
-    return [alg.spow(v, IGAMMA) for v in rgb]
+    pass
 
 
 def eotf_bt1886(rgb: Vector) -> Vector:
@@ -49,8 +48,7 @@ def eotf_bt1886(rgb: Vector) -> Vector:
 
     When using `lb == 0`, `lw == 1`, and gamma of `2.4`, this simplifies to a simple power of `2.4`.
     """
-
-    return [alg.spow(v, GAMMA) for v in rgb]
+    pass
 
 
 class Rec2020(sRGBLinear):
@@ -61,15 +59,12 @@ class Rec2020(sRGBLinear):
 
     def linear(self) -> str:
         """Return linear version of the RGB (if available)."""
-
-        return self.BASE
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from Rec. 2020."""
-
-        return eotf_bt1886(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to Rec. 2020."""
-
-        return inverse_eotf_bt1886(coords)
+        pass

@@ -25,14 +25,12 @@ def lin_prophoto_to_xyz(rgb: Vector) -> Vector:
     (so no chromatic adaptation needed afterwards)
     http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
     """
-
-    return alg.matmul_x3(RGB_TO_XYZ, rgb, dims=alg.D2_D1)
+    pass
 
 
 def xyz_to_lin_prophoto(xyz: Vector) -> Vector:
     """Convert XYZ to linear-light prophoto-rgb."""
-
-    return alg.matmul_x3(XYZ_TO_RGB, xyz, dims=alg.D2_D1)
+    pass
 
 
 class ProPhotoRGBLinear(sRGBLinear):
@@ -45,10 +43,8 @@ class ProPhotoRGBLinear(sRGBLinear):
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from Linear Pro Photo RGB."""
-
-        return lin_prophoto_to_xyz(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to Linear Pro Photo RGB."""
-
-        return xyz_to_lin_prophoto(coords)
+        pass

@@ -8,31 +8,25 @@ class PorterDuff(metaclass=ABCMeta):
 
     def __init__(self, cba: float, csa: float) -> None:
         """Initialize."""
-
-        self.cba = cba
-        self.csa = csa
+        pass
 
     @abstractmethod
     def fa(self) -> float:  # pragma: no cover
         """Calculate `Fa`."""
-
-        raise NotImplementedError('fa is not implemented')
+        pass
 
     @abstractmethod
     def fb(self) -> float:  # pragma: no cover
         """Calculate `Fb`."""
-
-        raise NotImplementedError('fb is not implemented')
+        pass
 
     def co(self, cb: float, cs: float) -> float:
         """Calculate premultiplied coordinate."""
-
-        return self.csa * self.fa() * cs + self.cba * self.fb() * cb
+        pass
 
     def ao(self) -> float:
         """Calculate output alpha."""
-
-        return self.csa * self.fa() + self.cba * self.fb()
+        pass
 
 
 class Clear(PorterDuff):
@@ -40,13 +34,11 @@ class Clear(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 0.0
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 0.0
+        pass
 
 
 class Copy(PorterDuff):
@@ -54,13 +46,11 @@ class Copy(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 1.0
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 0.0
+        pass
 
 
 class Destination(PorterDuff):
@@ -68,13 +58,11 @@ class Destination(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 0.0
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 1.0
+        pass
 
 
 class SourceOver(PorterDuff):
@@ -82,13 +70,11 @@ class SourceOver(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 1.0
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 1.0 - self.csa
+        pass
 
 
 class DestinationOver(PorterDuff):
@@ -96,13 +82,11 @@ class DestinationOver(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 1.0 - self.cba
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 1.0
+        pass
 
 
 class SourceIn(PorterDuff):
@@ -110,13 +94,11 @@ class SourceIn(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return self.cba
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 0.0
+        pass
 
 
 class DestinationeIn(PorterDuff):
@@ -124,13 +106,11 @@ class DestinationeIn(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 0.0
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return self.csa
+        pass
 
 
 class SourceOut(PorterDuff):
@@ -138,13 +118,11 @@ class SourceOut(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 1.0 - self.cba
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 0.0
+        pass
 
 
 class DestinationOut(PorterDuff):
@@ -152,13 +130,11 @@ class DestinationOut(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 0.0
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 1.0 - self.csa
+        pass
 
 
 class SourceAtop(PorterDuff):
@@ -166,13 +142,11 @@ class SourceAtop(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return self.cba
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 1.0 - self.csa
+        pass
 
 
 class DestinationAtop(PorterDuff):
@@ -180,13 +154,11 @@ class DestinationAtop(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 1.0 - self.cba
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return self.csa
+        pass
 
 
 class XOR(PorterDuff):
@@ -194,13 +166,11 @@ class XOR(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 1.0 - self.cba
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 1.0 - self.csa
+        pass
 
 
 class Lighter(PorterDuff):
@@ -208,13 +178,11 @@ class Lighter(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 1.0
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 1.0
+        pass
 
 
 class PlusDarker(PorterDuff):
@@ -222,23 +190,19 @@ class PlusDarker(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 1.0
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 1.0
+        pass
 
     def co(self, cb: float, cs: float) -> float:
         """Calculate premultiplied coordinate."""
-
-        return self.ao() - min(1.0, super().co(1.0 - cb, 1.0 - cs))
+        pass
 
     def ao(self) -> float:
         """Calculate output alpha."""
-
-        return min(1.0, super().ao())
+        pass
 
 
 class PlusLigher(PorterDuff):
@@ -246,23 +210,19 @@ class PlusLigher(PorterDuff):
 
     def fa(self) -> float:
         """Calculate `Fa`."""
-
-        return 1.0
+        pass
 
     def fb(self) -> float:
         """Calculate `Fb`."""
-
-        return 1.0
+        pass
 
     def co(self, cb: float, cs: float) -> float:
         """Calculate premultiplied coordinate."""
-
-        return min(1.0, super().co(cb, cs))
+        pass
 
     def ao(self) -> float:
         """Calculate output alpha."""
-
-        return min(1.0, super().ao())
+        pass
 
 
 SUPPORTED = {
@@ -286,8 +246,4 @@ SUPPORTED = {
 
 def compositor(name: str) -> type[PorterDuff]:
     """Get the requested compositor."""
-
-    composite = SUPPORTED.get(name)
-    if not composite:
-        raise ValueError(f"'{name}' compositing is not supported")
-    return composite
+    pass

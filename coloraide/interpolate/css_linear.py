@@ -1,4 +1,5 @@
 """Piecewise linear interpolation."""
+
 from __future__ import annotations
 from .linear import InterpolatorLinear
 from . import Interpolator, Interpolate
@@ -12,10 +13,6 @@ class CSSLinear(Interpolate):
 
     NAME = "css-linear"
 
-    @deprecated(
-        "The 'css-linear' interpolator has been deprecated as the 'linear' now works the same, please use 'linear'"
-    )
     def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:  # pragma: no cover
         """Return the CSS linear interpolator."""
-
-        return InterpolatorLinear(*args, **kwargs)
+        pass

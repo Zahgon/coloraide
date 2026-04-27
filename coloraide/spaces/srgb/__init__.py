@@ -12,16 +12,7 @@ def eotf_srgb(rgb: Vector) -> Vector:
 
     https://en.wikipedia.org/wiki/SRGB
     """
-
-    result = []
-    for i in rgb:
-        # Mirror linear nature of algorithm on the negative axis
-        abs_i = abs(i)
-        if abs_i > 0.04045:
-            result.append(math.copysign(((abs_i + 0.055) / 1.055) ** 2.4, i))
-        else:
-            result.append(i / 12.92)
-    return result
+    pass
 
 
 def inverse_eotf_srgb(rgb: Vector) -> Vector:
@@ -30,16 +21,7 @@ def inverse_eotf_srgb(rgb: Vector) -> Vector:
 
     https://en.wikipedia.org/wiki/SRGB
     """
-
-    result = []
-    for i in rgb:
-        # Mirror linear nature of algorithm on the negative axis
-        abs_i = abs(i)
-        if abs_i > 0.0031308:
-            result.append(math.copysign(1.055 * (alg.nth_root(abs_i, 2.4)) - 0.055, i))
-        else:
-            result.append(12.92 * i)
-    return result
+    pass
 
 
 class sRGB(sRGBLinear):
@@ -51,15 +33,12 @@ class sRGB(sRGBLinear):
 
     def linear(self) -> str:
         """Return linear version of the RGB (if available)."""
-
-        return self.BASE
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From sRGB Linear to sRGB."""
-
-        return inverse_eotf_srgb(coords)
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To sRGB Linear from sRGB."""
-
-        return eotf_srgb(coords)
+        pass

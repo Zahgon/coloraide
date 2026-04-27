@@ -28,19 +28,7 @@ class OkLCh(base.OkLCh):
         **kwargs: Any
     ) -> str:
         """Convert to CSS."""
-
-        return serialize.serialize_css(
-            parent,
-            func='oklch',
-            alpha=alpha,
-            precision=precision,
-            rounding=rounding,
-            fit=fit,
-            none=none,
-            color=color,
-            percent=percent,
-            angle=angle
-        )
+        pass
 
     def match(
         self,
@@ -49,5 +37,4 @@ class OkLCh(base.OkLCh):
         fullmatch: bool = True
     ) -> tuple[tuple[Vector, float], int] | None:
         """Match a CSS color string."""
-
-        return parse.parse_css(self, string, start, fullmatch)
+        pass

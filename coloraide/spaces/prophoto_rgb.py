@@ -17,15 +17,7 @@ def lin_prophoto(rgb: Vector) -> Vector:
 
     https://en.wikipedia.org/wiki/ProPhoto_RGB_color_space
     """
-
-    result = []
-    for i in rgb:
-        # Mirror linear nature of algorithm on the negative axis
-        if abs(i) < ET2:
-            result.append(i / 16.0)
-        else:
-            result.append(alg.spow(i, 1.8))
-    return result
+    pass
 
 
 def gam_prophoto(rgb: Vector) -> Vector:
@@ -36,15 +28,7 @@ def gam_prophoto(rgb: Vector) -> Vector:
 
     https://en.wikipedia.org/wiki/ProPhoto_RGB_color_space
     """
-
-    result = []
-    for i in rgb:
-        # Mirror linear nature of algorithm on the negative axis
-        if abs(i) < ET:
-            result.append(16.0 * i)
-        else:
-            result.append(alg.nth_root(i, 1.8))
-    return result
+    pass
 
 
 class ProPhotoRGB(sRGBLinear):
@@ -56,15 +40,12 @@ class ProPhotoRGB(sRGBLinear):
 
     def linear(self) -> str:
         """Return linear version of the RGB (if available)."""
-
-        return self.BASE
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from Pro Photo RGB."""
-
-        return lin_prophoto(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to Pro Photo RGB."""
-
-        return gam_prophoto(coords)
+        pass

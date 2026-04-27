@@ -39,14 +39,12 @@ SPECIAL_GAMUTS = {
 
 def hwb_to_srgb(coords: Vector) -> Vector:  # pragma: no cover
     """Convert HWB to sRGB."""
-
-    return hsv_to_srgb(hwb_to_hsv(coords))
+    pass
 
 
 def srgb_to_hwb(coords: Vector) -> Vector:  # pragma: no cover
     """Convert sRGB to HWB."""
-
-    return hsv_to_hwb(srgb_to_hsv(coords))
+    pass
 
 
 @lru_cache(maxsize=20, typed=True)
@@ -62,58 +60,7 @@ def coerce_to_rgb(cs: Space) -> Space:
     For gamut mapping, RGB cylindrical spaces can be coerced into an RGB form using traditional
     HSL, HSV, or HWB approaches which is good enough.
     """
-
-    if isinstance(cs, HSLish):
-        to_ = hsl_to_srgb  # type: Callable[[Vector], Vector]
-        from_ = srgb_to_hsl  # type: Callable[[Vector], Vector]
-    elif isinstance(cs, HSVish):
-        to_ = hsv_to_srgb
-        from_ = srgb_to_hsv
-    elif isinstance(cs, HWBish):  # pragma: no cover
-        to_ = hwb_to_srgb
-        from_ = srgb_to_hwb
-    else:  # pragma: no cover
-        raise ValueError(f'Cannot coerce {cs.NAME} to an RGB space.')
-
-    class RGB(sRGBLinear):
-        """Custom RGB class."""
-
-        NAME = f'-rgb-{cs.NAME}'
-        BASE = cs.NAME
-        GAMUT_CHECK = None
-        CLIP_SPACE = None
-        WHITE = cs.WHITE
-        DYAMIC_RANGE = cs.DYNAMIC_RANGE
-        INDEXES = cs.indexes()
-        # Scale saturation and lightness (or HWB whiteness and blackness)
-        SCALE_SAT = cs.channels[INDEXES[1]].high
-        SCALE_LIGHT = cs.channels[INDEXES[2]].high
-
-        def to_base(self, coords: Vector) -> Vector:
-            """Convert from RGB to HSL."""
-
-            coords = from_(coords)
-            if self.SCALE_SAT != 1:
-                coords[1] *= self.SCALE_SAT
-            if self.SCALE_LIGHT != 1:
-                coords[2] *= self.SCALE_LIGHT
-            ordered = [0.0, 0.0, 0.0]
-            for e, c in enumerate(coords):
-                ordered[self.INDEXES[e]] = c
-            return ordered
-
-        def from_base(self, coords: Vector) -> Vector:
-            """Convert from HSL to RGB."""
-
-            coords = [coords[i] for i in self.INDEXES]
-            if self.SCALE_SAT != 1:
-                coords[1] /= self.SCALE_SAT
-            if self.SCALE_LIGHT != 1:
-                coords[2] /= self.SCALE_LIGHT
-            coords = to_(coords)
-            return coords
-
-    return RGB()
+    pass
 
 
 def adjust_luminance(
@@ -124,29 +71,7 @@ def adjust_luminance(
     preserve_luminance: bool = True
 ) -> None:
     """Adjust luminance of a color."""
-
-    with color.within('xyz-d65') as c:
-        d65 = c._space.WHITE
-        adapt = d65 != white
-        xyz = c.chromatic_adaptation(d65, white, c[:-1]) if adapt else c[:-1]
-        Y = alg.clamp(Y, 0.0, max_luminance)
-        # Luminance below the cusp can just be restored
-        if xyz[1] > Y:
-            xyz = util.xy_to_xyz(util.xyz_to_xyY(xyz, white)[:-1], Y)
-            c[:-1] = c.chromatic_adaptation(white, d65, xyz) if adapt else xyz
-        # Luminance above the cusp requires us to find the intersection of the vectors of the
-        # path between the color and white and those same colors with the adjusted luminance.
-        elif preserve_luminance and xyz[1] < Y:
-            xyy = util.xyz_to_xyY(xyz, white)
-            intersect = alg.line_interesect(
-                xyz,
-                util.xy_to_xyz(white, max_luminance),
-                util.xy_to_xyz(xyy[:2], Y),
-                util.xy_to_xyz(white, Y)
-            )
-            # Update color if we found an intersection
-            if intersect is not None:
-                c[:-1] = c.chromatic_adaptation(white, d65, intersect) if adapt else intersect
+    pass
 
 
 def scale_rgb(
@@ -158,100 +83,17 @@ def scale_rgb(
     preserve_luminance: bool = False
 ) -> None:
     """Apply color scaling."""
-
-    cs = color.CS_MAP[scale_space]
-    orig_space = scale_space
-
-    # Requires an RGB-ish or Prism space, preferably a linear space.
-    # Coerce RGB cylinders with no defined RGB space to RGB
-    coerced = False
-    if not isinstance(cs, Prism) or isinstance(cs, Luminant):
-        coerced = True
-        cs = coerce_to_rgb(cs)
-
-    # If there is a linear version of the RGB space, results will be better if we use that.
-    maximum = cs.channels[0].high
-    linear = cs.linear()
-    if linear and linear in color.CS_MAP:
-        subtractive = cs.SUBTRACTIVE
-        cs = color.CS_MAP[linear]
-        if subtractive != cs.SUBTRACTIVE:
-            maximum = color.new(scale_space, [cs.CHANNELS[0].low] * 3).convert(linear, in_place=True)[0]
-        else:
-            maximum = color.new(scale_space, [maximum] * 3).convert(linear, in_place=True)[0]
-        scale_space = linear
-
-    # Convert to the target gamut
-    mapcolor = color.convert(scale_space).normalize(nans=False)
-
-    # Grab the white point and the luminance of the current gamut.
-    white = mapcolor._space.WHITE
-    Y = color.Y()
-
-    # Scale the color into gamut
-    rgb = cs.from_base(mapcolor[:-1]) if coerced else mapcolor[:-1]
-    mn = min(min(rgb), 0.0) if not clip_negative else 0.0
-    mx = max(rgb) - mn
-    for i in range(len(rgb)):
-        rgb[i] = alg.clamp((rgb[i] - mn) / mx if mx else (rgb[i] - mn), 0.0, 1.0) * maximum
-    mapcolor[:-1] = cs.to_base(rgb) if coerced else rgb
-
-    # Check if luminance doesn't match and update accordingly.
-    if not max_saturation:
-        adjust_luminance(mapcolor, Y, white, maximum, preserve_luminance)
-
-    # Clip in the original gamut bound color space and update the original color
-    clip_channels(mapcolor.convert(orig_space, in_place=True))
-    color.update(mapcolor)
+    pass
 
 
 def clip_channels(color: Color, nans: bool = True) -> bool:
     """Clip channels."""
-
-    clipped = False
-
-    cs = color._space
-    for i, value in enumerate(cs.normalize(color[:-1])):
-
-        chan = cs.channels[i]
-
-        # Ignore angles, undefined, or unbounded channels
-        if not chan.bound or chan.flags & FLG_ANGLE or math.isnan(value):
-            color[i] = value
-            continue
-
-        # Fit value in bounds.
-        if value < chan.low:
-            color[i] = chan.low
-        elif value > chan.high:
-            color[i] = chan.high
-        else:
-            color[i] = value
-            continue
-
-        clipped = True
-
-    return clipped
+    pass
 
 
 def verify(color: Color, tolerance: float) -> bool:
     """Verify the values are in bound."""
-
-    cs = color._space
-    for i, value in enumerate(cs.normalize(color[:-1])):
-        chan = cs.channels[i]
-
-        # Ignore undefined channels, angles which wrap, and unbounded channels
-        if not chan.bound or math.isnan(value) or chan.flags & FLG_ANGLE:
-            continue
-
-        a = chan.low
-        b = chan.high
-
-        # Check if bounded values are in bounds
-        if (a is not None and value < (a - tolerance)) or (b is not None and value > (b + tolerance)):
-            return False
-    return True
+    pass
 
 
 class Fit(Plugin, metaclass=ABCMeta):

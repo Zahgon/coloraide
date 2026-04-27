@@ -58,76 +58,12 @@ def hct_to_xyz(coords: Vector, env: Environment) -> Vector:
     reason, we cannot achieve the accuracy we seek in the allotted iterations,
     just return the closest we were able to get.
     """
-
-    h, c, t = coords[:]
-
-    if t == 0 and c == 0:
-        return [0.0, 0.0, 0.0]
-
-    # Calculate the Y we need to target
-    y = lstar_to_y(t)
-
-    # Try to start with a reasonable initial guess for J
-    # Calculated by curve fitting J vs T.
-    if t >= 0:
-        j = 0.003790578348640494 * t * t + 0.6089841908066893 * t + 0.9154856839591797
-    else:
-        j = 9.514281401058887e-06 * t * t + 0.08693011228986187 * t - 21.92910930537688
-
-    epsilon = 1e-12
-
-    maxiter = 16
-    last = math.inf
-    best = xyz = [0.0] * 3
-
-    # Try to find a J such that the returned y matches the returned y of the L*
-    for _ in range(maxiter):
-        prev = j
-        xyz = cam_to_xyz(J=j, C=c, h=h, env=env)
-
-        # If we are within range, return XYZ
-        # If we are closer than last time, save the values
-        f0 = xyz[1] - y
-        delta = abs(f0)
-
-        if delta < epsilon:
-            return xyz
-
-        if delta < last:
-            best = xyz
-            last = delta
-
-        # ```
-        # f(j_root) = (j ** (1 / 2)) * 0.1
-        # f(j) = ((f(j_root) * 100) ** 2) / j - 1 = 0
-        # f(j_root) = Y = y / 100
-        # f(j) = (y ** 2) / j - 1
-        # f'(j) = (2 * y) / j
-        # f'(j) = dx
-        # j = j - f0 / dx
-        # ```
-
-        # Newton: 2nd order convergence
-        # `dx` fraction is flipped so we can multiply by the derivative instead of divide
-        j -= f0 * alg.zdiv(j, 2 * xyz[1])
-
-        # If J is zero, the next round will yield zero, so quit
-        if j == 0 or abs(prev - j) < epsilon:  # pragma: no cover
-            break
-
-    # ```
-    # print('FAIL:', [h, c, t], xyz[1], y)
-    # ```
-
-    return best
+    pass
 
 
 def xyz_to_hct(coords: Vector, env: Environment) -> Vector:
     """Convert XYZ to HCT."""
-
-    t = y_to_lstar(coords[1])
-    c, h = xyz_to_cam(coords, env)[1:3]
-    return [h, c, t]
+    pass
 
 
 class HCT(LCh):
@@ -164,29 +100,20 @@ class HCT(LCh):
 
     def lightness_name(self) -> str:
         """Get lightness name."""
-
-        return "t"
+        pass
 
     def normalize(self, coords: Vector) -> Vector:
         """Normalize."""
-
-        if coords[1] < 0.0:
-            return self.from_base(self.to_base(coords))
-        coords[0] %= 360.0
-        return coords
+        pass
 
     def names(self) -> tuple[Channel, ...]:
         """Return LCh-ish names in the order L C h."""
-
-        channels = self.channels
-        return channels[2], channels[1], channels[0]
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from CAM16."""
-
-        return hct_to_xyz(coords, self.ENV)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to CAM16."""
-
-        return xyz_to_hct(coords, self.ENV)
+        pass

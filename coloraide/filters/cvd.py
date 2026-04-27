@@ -132,20 +132,7 @@ def brettel(color: Color, severity: float, wings: tuple[Matrix, Matrix, Vector])
 
     Probably the only accurate approach for tritanopia, but is more expensive to calculate.
     """
-
-    w1, w2, sep = wings
-
-    # Convert to LMS
-    lms_c = alg.matmul_x3(LRGB_TO_LMS, color[:-1], dims=alg.D2_D1)
-
-    # Apply appropriate wing filter based on which side of the separator we are on.
-    # Tritanopia filter and LMS to sRGB conversion are included in the same matrix.
-    coords = alg.matmul_x3(w2 if alg.matmul_x3(lms_c, sep, dims=alg.D1) > 0 else w1, lms_c, dims=alg.D2_D1)
-
-    if severity < 1:
-        color[:-1] = [alg.lerp(a, b, severity) for a, b in zip(color[:-1], coords)]
-    else:
-        color[:-1] = coords
+    pass
 
 
 def vienot(color: Color, severity: float, transform: Matrix) -> None:
@@ -163,12 +150,7 @@ def vienot(color: Color, severity: float, transform: Matrix) -> None:
     Our matrices are precalculated, so all we need to do is dot and go unless we want something lower than severity 1,
     then we interpolate against the original color.
     """
-
-    coords = alg.matmul_x3(transform, color[:-1], dims=alg.D2_D1)
-    if severity < 1:
-        color[:-1] = [alg.lerp(c1, c2, severity) for c1, c2 in zip(color[:-1], coords)]
-    else:
-        color[:-1] = coords
+    pass
 
 
 def machado(color: Color, severity: float, matrices: dict[int, Matrix]) -> None:
@@ -180,35 +162,7 @@ def machado(color: Color, severity: float, matrices: dict[int, Matrix]) -> None:
     Decent results for protanopia and deuteranopia, but tritanopia is really only an approximation.
     They don't even bother to show tritanopia results.
     """
-
-    # Calculate the approximate severity
-    severity *= 10
-    severity1 = int(severity)
-
-    # Filter the color according to the severity
-    m1 = matrices[severity1]
-    coords = alg.matmul_x3(m1, color[:-1], dims=alg.D2_D1)
-
-    # If severity was not exact, and it also isn't max severity,
-    # let's calculate the next most severity and interpolate
-    # between the two results.
-    if severity1 != severity and severity1 < 10:
-        # Calculate next highest severity
-        severity2 = severity1 + 1
-        # Calculate the weight
-        weight = (severity - severity1)
-        # Get the next severity in the list
-        m2 = matrices[severity2]
-
-        # It is actually stated that the two matrices should be interpolated,
-        # but it ends up being faster just modifying the color on both the high
-        # and low matrix and interpolating the color than interpolating the matrix
-        # and then applying it to the color. The results are identical as well.
-        coords2 = alg.matmul_x3(m2, color[:-1], dims=alg.D2_D1)
-        coords = [alg.lerp(c1, c2, weight) for c1, c2 in zip(coords, coords2)]
-
-    # Return the altered color
-    color[:-1] = coords
+    pass
 
 
 class Protan(Filter):
@@ -224,50 +178,31 @@ class Protan(Filter):
 
     def __init__(self, severe: str = 'vienot', anomalous: str = 'machado', **kwargs: Any) -> None:
         """Initialize."""
-
-        self.severe = severe
-        self.anomalous = anomalous
+        pass
 
     def brettel(self, color: Color, severity: float) -> None:
         """Tritanopia vision deficiency using Brettel method."""
-
-        brettel(color, severity, self.BRETTEL)
+        pass
 
     def vienot(self, color: Color, severity: float) -> None:
         """Tritanopia vision deficiency using Viénot method."""
-
-        vienot(color, severity, self.VIENOT)
+        pass
 
     def machado(self, color: Color, severity: float) -> None:
         """Tritanopia vision deficiency using Machado method."""
-
-        machado(color, severity, self.MACHADO)
+        pass
 
     def select_filter(self, method: str) -> Callable[..., None]:
         """Select the best filter."""
-
-        if method == 'brettel':
-            return self.brettel
-        elif method == 'vienot':
-            return self.vienot
-        elif method == 'machado':
-            return self.machado
-        else:
-            raise ValueError(f"Unrecognized CVD filter method '{method}'")
+        pass
 
     def get_best_filter(self, method: str | None, max_severity: bool) -> Callable[..., None]:
         """Get the best filter based on the situation."""
-
-        if method is None:
-            method = self.severe if max_severity else self.anomalous
-        return self.select_filter(method)
+        pass
 
     def filter(self, color: Color, amount: float | None = None, **kwargs: Any) -> None:  # noqa: A003
         """Filter the color."""
-
-        method = kwargs.get('method')  # type: str | None
-        amount = alg.clamp(1 if amount is None else amount, 0, 1)
-        self.get_best_filter(method, amount == 1)(color, amount)
+        pass
 
 
 class Deutan(Protan):
@@ -291,5 +226,4 @@ class Tritan(Protan):
 
     def __init__(self, severe: str = 'brettel', anomalous: str = 'brettel', **kwargs: Any) -> None:
         """Initialize."""
-
-        super().__init__(severe, anomalous)
+        pass

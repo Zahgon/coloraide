@@ -12,16 +12,12 @@ from ..types import Vector
 
 def xyz_to_ucs(xyz: Vector) -> Vector:
     """Translate XYZ to 1960 UCS."""
-
-    x, y, z = xyz
-    return [(2 / 3) * x, y, (-x + 3 * y + z) * 0.5]
+    pass
 
 
 def ucs_to_xyz(ucs: Vector) -> Vector:
     """Translate 1960 UCS to XYZ."""
-
-    u, v, w = ucs
-    return [(3 / 2) * u, v, (3 / 2) * u - 3 * v + 2 * w]
+    pass
 
 
 class UCS(Luminant, Prism, Space):
@@ -39,15 +35,12 @@ class UCS(Luminant, Prism, Space):
 
     def lightness_name(self) -> str:
         """Get lightness name."""
-
-        return "v"
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ."""
-
-        return ucs_to_xyz(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ."""
-
-        return xyz_to_ucs(coords)
+        pass

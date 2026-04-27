@@ -12,10 +12,7 @@ class InterpolatorMonotone(InterpolatorBSpline[AnyColor]):
 
     def setup(self) -> None:
         """Setup."""
-
-        self.handle_undefined()
-        self.spline = alg.MonotoneInterpolator
-        self.spline.preprocess(self.coordinates, end_cond=self.end_cond)
+        pass
 
 
 class Monotone(Interpolate):
@@ -25,5 +22,4 @@ class Monotone(Interpolate):
 
     def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:
         """Return the monotone interpolator."""
-
-        return InterpolatorMonotone(*args, **kwargs)
+        pass

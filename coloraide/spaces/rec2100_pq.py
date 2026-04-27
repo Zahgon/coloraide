@@ -23,15 +23,12 @@ class Rec2100PQ(sRGBLinear):
 
     def linear(self) -> str:
         """Return linear version of the RGB (if available)."""
-
-        return self.BASE
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To base from Rec. 2100 PQ."""
-
-        return [c / YW for c in util.eotf_st2084(coords)]
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From base to Rec. 2100 PQ."""
-
-        return util.inverse_eotf_st2084([max(c * YW, 0.0) for c in coords])
+        pass

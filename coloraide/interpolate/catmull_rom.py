@@ -16,10 +16,7 @@ class InterpolatorCatmullRom(InterpolatorBSpline[AnyColor]):
 
     def setup(self) -> None:
         """Setup."""
-
-        self.handle_undefined()
-        self.spline = alg.CatmullRomInterpolator
-        self.spline.preprocess(self.coordinates, end_cond=self.end_cond)
+        pass
 
 
 class CatmullRom(Interpolate):
@@ -29,5 +26,4 @@ class CatmullRom(Interpolate):
 
     def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:
         """Return the Catmull-Rom interpolator."""
-
-        return InterpolatorCatmullRom(*args, **kwargs)
+        pass

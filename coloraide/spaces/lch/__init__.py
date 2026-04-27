@@ -12,25 +12,12 @@ from typing import Any
 
 def lab_to_lch(lab: Vector) -> Vector:
     """Lab to LCh."""
-
-    l, a, b = lab
-
-    c = math.sqrt(a ** 2 + b ** 2)
-    h = math.degrees(math.atan2(b, a))
-
-    return [l, c, util.constrain_hue(h)]
+    pass
 
 
 def lch_to_lab(lch: Vector) -> Vector:
     """LCh to Lab."""
-
-    l, c, h = lch
-
-    return [
-        l,
-        c * math.cos(math.radians(h)),
-        c * math.sin(math.radians(h))
-    ]
+    pass
 
 
 class LCh(LChish, Space):
@@ -49,35 +36,23 @@ class LCh(LChish, Space):
 
     def __init__(self, **kwargs: Any):
         """Initialize."""
-
-        super().__init__(**kwargs)
-        order = alg.order(round(self.channels[self.indexes()[0]].high, 5))
-        self.achromatic_threshold = max((1 * 10.0 ** order) / 1_000_000, 1e-12)
+        pass
 
     def normalize(self, coords: Vector) -> Vector:
         """Normalize coordinates."""
-
-        if coords[1] < 0:
-            coords[1] *= -1.0
-            coords[2] += 180.0
-        coords[2] %= 360.0
-        return coords
+        pass
 
     def is_achromatic(self, coords: Vector) -> bool | None:
         """Check if color is achromatic."""
-
-        # Account for both positive and negative chroma
-        return abs(coords[1]) < self.achromatic_threshold
+        pass
 
     def to_base(self, coords: Vector) -> Vector:
         """To Lab from LCh."""
-
-        return lch_to_lab(coords)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From Lab to LCh."""
-
-        return lab_to_lch(coords)
+        pass
 
 
 class CIELCh(LCh):

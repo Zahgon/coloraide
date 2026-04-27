@@ -15,25 +15,9 @@ def deprecated(message: str, stacklevel: int = 2) -> Callable[..., Any]:
         def some_method()"
             pass
     """
-
-    def _wrapper(func: Callable[..., Any]) -> Callable[..., Any]:
-        @wraps(func)
-        def _deprecated_func(*args: Any, **kwargs: Any) -> Any:
-            warnings.warn(
-                f"'{func.__name__}' is deprecated. {message}",
-                category=DeprecationWarning,
-                stacklevel=stacklevel
-            )
-            return func(*args, **kwargs)
-        return _deprecated_func
-    return _wrapper
+    pass
 
 
 def warn_deprecated(message: str, stacklevel: int = 2) -> None:
     """Warn deprecated."""
-
-    warnings.warn(
-        message,
-        category=DeprecationWarning,
-        stacklevel=stacklevel
-    )
+    pass

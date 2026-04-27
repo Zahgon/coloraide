@@ -47,27 +47,4 @@ class Channel(str):
         angle: int = ANGLE_NULL
     ) -> Channel:
         """Initialize."""
-
-        obj = super().__new__(cls, name)
-        obj.bound = bound
-        obj.flags = flags
-        obj.angle = (ANGLE_DEG if angle == ANGLE_NULL else angle) if flags & FLG_ANGLE else ANGLE_NULL
-        if obj.angle:
-            obj.low = ANGLE_RANGE[obj.angle][0]
-            obj.high = ANGLE_RANGE[obj.angle][1]
-        else:
-            obj.low = low
-            obj.high = high
-        mirror = flags & FLG_MIRROR_PERCENT and abs(low) == high
-        obj.span = high if mirror else high - low
-        obj.offset = 0.0 if mirror else -low
-        # If nothing is provided, assume casting to float
-        if limit is None:
-            limit = float
-        # If a tuple of min/max is provided, create a function to clamp to the range
-        elif isinstance(limit, tuple):
-            limit = lambda x, l=limit: float(alg.clamp(x, l[0], l[1]))
-        obj.limit = limit
-        obj.nans = nans
-
-        return obj
+        pass

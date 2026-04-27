@@ -11,53 +11,27 @@ from ..types import Vector
 # -----------------------------------------
 def lum(rgb: Vector) -> float:
     """Get luminosity."""
-
-    return 0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]
+    pass
 
 
 def clip_color(rgb: Vector) -> Vector:
     """Clip color."""
-
-    l = lum(rgb)
-    n = min(*rgb)
-    x = max(*rgb)
-
-    if n < 0:
-        rgb = [l + (((c - l) * l) / (l - n)) for c in rgb]
-
-    if x > 1:
-        rgb = [l + (((c - l) * (1 - l)) / (x - l)) for c in rgb]
-
-    return rgb
+    pass
 
 
 def set_lum(rgb: Vector, l: float) -> Vector:
     """Set luminosity."""
-
-    d = l - lum(rgb)
-    new_rgb = [c + d for c in rgb]
-    return clip_color(new_rgb)
+    pass
 
 
 def sat(rgb: Vector) -> float:
     """Saturation."""
-
-    return max(*rgb) - min(*rgb)
+    pass
 
 
 def set_sat(rgb: Vector, s: float) -> Vector:
     """Set saturation."""
-
-    final = [0.0] * 3
-    indices, rgb_sort = zip(*sorted(enumerate(rgb), key=itemgetter(1)))
-    if rgb_sort[2] > rgb_sort[0]:
-        final[indices[1]] = (((rgb_sort[1] - rgb_sort[0]) * s) / (rgb_sort[2] - rgb_sort[0]))
-        final[indices[2]] = s
-    else:
-        final[indices[1]] = 0
-        final[indices[2]] = 0
-    final[indices[0]] = 0
-    return final
+    pass
 
 
 # -----------------------------------------
@@ -69,8 +43,7 @@ class Blend(metaclass=ABCMeta):
     @abstractmethod
     def blend(self, coords1: Vector, coords2: Vector) -> Vector:  # pragma: no cover
         """Blend coordinates."""
-
-        raise NotImplementedError('blend is not implemented')
+        pass
 
 
 class SeperableBlend(Blend):
@@ -79,13 +52,11 @@ class SeperableBlend(Blend):
     @abstractmethod
     def apply(self, cb: float, cs: float) -> float:  # pragma: no cover
         """Blend two values."""
-
-        raise NotImplementedError('apply is not implemented')
+        pass
 
     def blend(self, coords1: Vector, coords2: Vector) -> Vector:
         """Apply blending logic."""
-
-        return [self.apply(cb, cs) for cb, cs in zip(coords1, coords2)]
+        pass
 
 
 class NonSeperableBlend(Blend):
@@ -94,13 +65,11 @@ class NonSeperableBlend(Blend):
     @abstractmethod
     def apply(self, cb: Vector, cs: Vector) -> Vector:  # pragma: no cover
         """Blend two vectors."""
-
-        raise NotImplementedError('apply is not implemented')
+        pass
 
     def blend(self, coords1: Vector, coords2: Vector) -> Vector:
         """Apply blending logic."""
-
-        return self.apply(coords1, coords2)
+        pass
 
 
 class BlendNormal(SeperableBlend):
@@ -108,8 +77,7 @@ class BlendNormal(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        return cs
+        pass
 
 
 class BlendMultiply(SeperableBlend):
@@ -117,8 +85,7 @@ class BlendMultiply(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        return cb * cs
+        pass
 
 
 class BlendScreen(SeperableBlend):
@@ -126,8 +93,7 @@ class BlendScreen(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        return cb + cs - (cb * cs)
+        pass
 
 
 class BlendDarken(SeperableBlend):
@@ -135,8 +101,7 @@ class BlendDarken(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        return min(cb, cs)
+        pass
 
 
 class BlendLighten(SeperableBlend):
@@ -144,8 +109,7 @@ class BlendLighten(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        return max(cb, cs)
+        pass
 
 
 class BlendColorDodge(SeperableBlend):
@@ -153,13 +117,7 @@ class BlendColorDodge(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        if cb == 0:
-            return 0
-        elif cs == 1:
-            return 1
-        else:
-            return min(1, cb / (1 - cs))
+        pass
 
 
 class BlendColorBurn(SeperableBlend):
@@ -167,13 +125,7 @@ class BlendColorBurn(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        if cb == 1:
-            return 1
-        elif cs == 0:
-            return 0
-        else:
-            return 1 - min(1, (1 - cb) / cs)
+        pass
 
 
 class BlendOverlay(SeperableBlend):
@@ -181,17 +133,11 @@ class BlendOverlay(SeperableBlend):
 
     def __init__(self) -> None:
         """Initialize."""
-
-        self.screen = BlendScreen()
-        self.multiply = BlendMultiply()
+        pass
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        if cb >= 0.5:
-            return self.screen.apply(cb, 2 * cs - 1)
-        else:
-            return self.multiply.apply(cb, cs * 2)
+        pass
 
 
 class BlendDifference(SeperableBlend):
@@ -199,8 +145,7 @@ class BlendDifference(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        return abs(cb - cs)
+        pass
 
 
 class BlendExclusion(SeperableBlend):
@@ -208,8 +153,7 @@ class BlendExclusion(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        return cb + cs - 2 * cb * cs
+        pass
 
 
 class BlendHardLight(SeperableBlend):
@@ -217,17 +161,11 @@ class BlendHardLight(SeperableBlend):
 
     def __init__(self) -> None:
         """Initialize."""
-
-        self.screen = BlendScreen()
-        self.multiply = BlendMultiply()
+        pass
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        if cs <= 0.5:
-            return self.multiply.apply(cb, cs * 2)
-        else:
-            return self.screen.apply(cb, 2 * cs - 1)
+        pass
 
 
 class BlendSoftLight(SeperableBlend):
@@ -235,15 +173,7 @@ class BlendSoftLight(SeperableBlend):
 
     def apply(self, cb: float, cs: float) -> float:
         """Blend two values."""
-
-        if cs <= 0.5:
-            return cb - (1 - 2 * cs) * cb * (1 - cb)
-        else:
-            if cb <= 0.25:
-                d = ((16 * cb - 12) * cb + 4) * cb
-            else:
-                d = math.sqrt(cb)
-            return cb + (2 * cs - 1) * (d - cb)
+        pass
 
 
 class BlendHue(NonSeperableBlend):
@@ -251,8 +181,7 @@ class BlendHue(NonSeperableBlend):
 
     def apply(self, cb: Vector, cs: Vector) -> Vector:
         """Blend two vectors."""
-
-        return set_lum(set_sat(cs, sat(cb)), lum(cb))
+        pass
 
 
 class BlendSaturation(NonSeperableBlend):
@@ -260,8 +189,7 @@ class BlendSaturation(NonSeperableBlend):
 
     def apply(self, cb: Vector, cs: Vector) -> Vector:
         """Blend two vectors."""
-
-        return set_lum(set_sat(cb, sat(cs)), lum(cb))
+        pass
 
 
 class BlendLuminosity(NonSeperableBlend):
@@ -269,8 +197,7 @@ class BlendLuminosity(NonSeperableBlend):
 
     def apply(self, cb: Vector, cs: Vector) -> Vector:
         """Blend two vectors."""
-
-        return set_lum(cb, lum(cs))
+        pass
 
 
 class BlendColor(NonSeperableBlend):
@@ -278,34 +205,32 @@ class BlendColor(NonSeperableBlend):
 
     def apply(self, cb: Vector, cs: Vector) -> Vector:
         """Blend two vectors."""
+        pass
 
-        return set_lum(cs, lum(cb))
 
-
-SUPPORTED = {
-    "normal": BlendNormal(),
-    "multiply": BlendMultiply(),
-    "screen": BlendScreen(),
-    "darken": BlendDarken(),
-    "lighten": BlendLighten(),
-    "color-dodge": BlendColorDodge(),
-    "color-burn": BlendColorBurn(),
-    "overlay": BlendOverlay(),
-    "difference": BlendDifference(),
-    "exclusion": BlendExclusion(),
-    "hard-light": BlendHardLight(),
-    "soft-light": BlendSoftLight(),
-    "hue": BlendHue(),
-    "saturation": BlendSaturation(),
-    "luminosity": BlendLuminosity(),
-    "color": BlendColor(),
-}  # type: dict[str, Blend]
+try:
+    SUPPORTED = {
+        "normal": BlendNormal(),
+        "multiply": BlendMultiply(),
+        "screen": BlendScreen(),
+        "darken": BlendDarken(),
+        "lighten": BlendLighten(),
+        "color-dodge": BlendColorDodge(),
+        "color-burn": BlendColorBurn(),
+        "overlay": BlendOverlay(),
+        "difference": BlendDifference(),
+        "exclusion": BlendExclusion(),
+        "hard-light": BlendHardLight(),
+        "soft-light": BlendSoftLight(),
+        "hue": BlendHue(),
+        "saturation": BlendSaturation(),
+        "luminosity": BlendLuminosity(),
+        "color": BlendColor(),
+    }
+except (NotImplementedError, TypeError, AttributeError):
+    SUPPORTED = {}  # type: dict[str, Blend]
 
 
 def get_blender(blend: str) -> Blend:
     """Get desired blend mode."""
-
-    blender = SUPPORTED.get(blend)
-    if not blender:
-        raise ValueError(f"'{blend}' is not a recognized blend mode")
-    return blender
+    pass

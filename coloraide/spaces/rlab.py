@@ -60,47 +60,21 @@ class Environment:
         discounting: str
     ) -> None:
         """Initialize."""
-
-        self.ref_white = util.xy_to_xyz(white)
-        self.surround = SURROUND[surround]
-        self.yn = adapting_luminance
-        self.d = alg.clamp(D[discounting] if isinstance(discounting, str) else discounting, 0.0, 1.0)
-        self.ram = self.calc_ram()
-        self.iram = alg.inv(self.ram)
+        pass
 
     def calc_ram(self) -> Matrix:
         """Calculate RAM."""
-
-        lms = alg.matmul_x3(M, self.ref_white, dims=alg.D2_D1)
-        a = []  # type: Vector
-        s = sum(lms)
-        for c in lms:
-            l = (3.0 * c) / s
-            p = (1.0 + alg.nth_root(self.yn, 3) + l) / (1.0 + alg.nth_root(self.yn, 3) + 1.0 / l)
-            a.append((p + self.d * (1.0 - p)) / c)
-        A = alg.diag(a)
-        return alg.multi_dot([R, A, M])  # type: ignore[no-any-return]
+        pass
 
 
 def rlab_to_xyz(rlab: Vector, env: Environment) -> Vector:
     """RLAB to XYZ."""
-
-    LR, aR, bR = rlab
-    yr = LR * 0.01
-    xr = alg.spow((aR / 430) + yr, env.surround)
-    zr = alg.spow(yr - (bR / 170), env.surround)
-    return alg.matmul_x3(env.iram, [xr, alg.spow(yr, env.surround), zr], dims=alg.D2_D1)
+    pass
 
 
 def xyz_to_rlab(xyz: Vector, env: Environment) -> Vector:
     """XYZ to RLAB."""
-
-    xyz_ref = alg.matmul_x3(env.ram, xyz, dims=alg.D2_D1)
-    xr, yr, zr = (alg.nth_root(c, env.surround) for c in xyz_ref)
-    LR = 100 * yr
-    aR = 430 * (xr - yr)
-    bR = 170 * (yr - zr)
-    return [LR, aR, bR]
+    pass
 
 
 class RLAB(Lab):
@@ -130,10 +104,8 @@ class RLAB(Lab):
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from Hunter Lab."""
-
-        return rlab_to_xyz(coords, self.ENV)
+        pass
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to Hunter Lab."""
-
-        return xyz_to_rlab(coords, self.ENV)
+        pass

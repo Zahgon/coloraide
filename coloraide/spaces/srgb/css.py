@@ -32,24 +32,7 @@ class sRGB(base.sRGB):
         **kwargs: Any
     ) -> str:
         """Convert to CSS."""
-
-        return serialize.serialize_css(
-            parent,
-            func='rgb',
-            alpha=alpha,
-            precision=precision,
-            rounding=rounding,
-            fit=fit,
-            none=none,
-            color=color,
-            hexa=hex,
-            name=names,
-            legacy=comma,
-            upper=upper,
-            percent=percent,
-            compress=compress,
-            scale=255
-        )
+        pass
 
     def match(
         self,
@@ -58,5 +41,4 @@ class sRGB(base.sRGB):
         fullmatch: bool = True
     ) -> tuple[tuple[Vector, float], int] | None:
         """Match a CSS color string."""
-
-        return parse.parse_css(self, string, start, fullmatch)
+        pass
